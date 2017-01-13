@@ -99,25 +99,12 @@ function init() {
     })
     scene.background = new THREE.Color( 0xffffff );
 
-    
-    // texture
-
-    var texture = new THREE.TextureLoader().load( '/public/textures/XDFG7688.jpg' );
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set( 100, 100 );
-
-    var material =
-	new THREE.MeshLambertMaterial({
-	    color: 0xCC0000
-	    // ,
-	    // map: texture
-	});
+    var material = new THREE.MeshLambertMaterial({ color: 0xCC0000 });
 	
     var manager = new THREE.LoadingManager();
-    manager.onProgress = function ( item, loaded, total ) {
-	console.log( item, loaded, total );
-    };
+    // manager.onProgress = function ( item, loaded, total ) {
+    // 	console.log( item, loaded, total );
+    // };
     
     // model
     var loader = new THREE.OBJLoader( manager );
@@ -150,7 +137,10 @@ function init() {
 
     renderers = _.map(containers, function(e, i){
     	var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    	renderer.setSize( sizes[i].width, sizes[i].height );
+	// console.log(e.getBoundingClientRect())
+	// console.log({ width: $(e).width(), height: $(e).height() })
+	// console.log(sizes[i])
+    	renderer.setSize( $(e).width(), $(e).height() );
     	e.appendChild( renderer.domElement );
     	return renderer;
     })
@@ -160,20 +150,13 @@ function init() {
 }
 
 function onWindowResize() {
-    var sizes = _.map(idx, function(e, i){
-	var r = {
-	    width:  $('#renderer_' + e).width(),
-	    height: $('#renderer_' + e).height()
-	};
-	return r
-    });
-
-    _.each(idx, function(e, i) {
-	var renderer = renderers[i];
+    _.each(renderers, function(e, i) {
+	var renderer = e;
+	var p = $(renderers[i].domElement).parent();
 	var camera = cameras[i];
-	renderer.setSize( sizes[i].width, sizes[i].height );
-	camera.aspect = sizes[i].width / sizes[i].height;
-	console.log(camera.aspect);
+
+    	renderer.setSize( $(p).width(), $(p).height() );
+	camera.aspect = $(p).width() /  $(p).height();
 	camera.updateProjectionMatrix();
     })
 }
@@ -202,3 +185,4 @@ function render() {
 	e.render( scene, camera );
     })
 }
+
