@@ -1,0 +1,7 @@
+% unless ($partial) { layout 'default' }
+<script src="/public/app/router.js"></script>
+<div id="main">
+</div>
+<script src="/public/app/obj_multiple.js"></script>
+<script src="/public/app/obj_clicker.js"></script>
+  

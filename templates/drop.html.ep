@@ -1,0 +1,40 @@
+<script>
+  var render_on = false;
+    $(function(){
+	$('.renderers').hide();
+	
+	var dropzone = document.getElementById('dropzone');
+	
+	// Optional.   Show the copy icon when dragging over.  Seems to only work for chrome.
+	dropzone.addEventListener('dragover', function(e) {
+	    e.stopPropagation();
+	    e.preventDefault();
+	    e.dataTransfer.dropEffect = 'copy';
+	});
+	
+// Get file data on drop
+	dropzone.addEventListener('drop', function(e) {
+	    e.stopPropagation();
+	    e.preventDefault();
+	    console.log('drop');
+	    file = e.dataTransfer.files[0]; // Array of all files
+	    var reader = new FileReader();
+            reader.onload = function(e2) { // finished reading file data.
+                src = e2.target.result;
+		$('.renderers').show();
+		$('#dropcontainer').hide();
+                console.log(src.length);
+		render_on = true;
+		init(src)
+            }
+            reader.readAsText(file);
+	});
+    })
+</script>
+<div class="row" id="dropcontainer">
+  <div class="col-md-10 col-md-offset-1">
+    <div id="dropzone" class="jumbotron" style="height:80vh;">
+      drop your OBJ file here
+    </div>
+  </div>
+</div>

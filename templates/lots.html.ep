@@ -1,0 +1,16 @@
+% unless ($partial) { layout 'default' }
+<div class="row" class="renderers" id="one_and_three">
+% my $offset = 0;
+% for my $i (1..16) {
+% $offset = (($i % 5) == 1) ? 0 : 0;
+<div id="renderer_<%= $i %>" class="col-md-3 col-md-offset-<%= $offset %>"></div>
+% }
+</div>
+<script>
+  var heights = ['25%'];
+  var zooms   = [2];
+</script>
+% unless ($partial) {
+<script src="/public/app/obj_multiple.js"></script>
+<script src="/public/app/obj_clicker.js"></script>
+% }

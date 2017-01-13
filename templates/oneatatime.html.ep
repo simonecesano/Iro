@@ -1,0 +1,15 @@
+% unless ($partial) { layout 'default' }
+<style>
+  .renderer { border: thin solid grey }
+</style>
+<div class="row" class="renderers" id="one_and_three">
+  <div id="renderer_1" class="col-md-10 col-md-offset-1 renderer"></div>
+</div>
+% unless ($partial) {
+<script>
+  var heights = ['100%'];
+  var zooms   = [1.5];
+</script>
+<script src="/public/app/obj_multiple.js"></script>
+<script src="/public/app/obj_clicker.js"></script>
+% }

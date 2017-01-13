@@ -1,0 +1,32 @@
+% unless ($partial) { layout 'default' }
+<script src="https://cdn.rawgit.com/jankovicsandras/imagetracerjs/1aeb1b14/imagetracer_v1.1.2.js"></script>
+<script>
+    ImageTracer.loadImage(
+	'/public/panda.png',
+	function(canvas){ (document.getElementById('canvascontainer')).appendChild(canvas); }
+    );
+ImageTracer.loadImage(
+	'/public/panda.png',
+	function(canvas){
+            // Getting ImageData from canvas with the helper function getImgdata().
+            var imgd = ImageTracer.getImgdata( canvas );
+	    
+            // Synchronous tracing to SVG string
+            var svgstr = ImageTracer.imagedataToSVG( imgd, { scale: 1 } );
+	    console.log(svgstr);
+            // Appending SVG
+            ImageTracer.appendSVGString( svgstr, 'svgcontainer' );
+	}
+    );
+
+</script>
+<div class="row">
+  <div id="renderer_1" class="col-md-9 col-md-offset-1">
+    <div id="canvascontainer"></div>
+  </div>
+</div>
+<div class="row">
+  <div id="renderer_1" class="col-md-9 col-md-offset-1">
+    <div id="svg_container"></div>
+  </div>
+</div>

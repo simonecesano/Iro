@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+  <head>
+    <title></title>
+    <script src="/public/js/underscore-min.js"></script>
+    <script src="https://fastcdn.org/FileSaver.js/1.1.20151003/FileSaver.min.js"></script>
+    
+    
+    <script src="/public/js/tether.min.js"></script>
+    
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
+
+    <link  href="/public/bootstrap/css/submenu.css" media="screen" rel="stylesheet" type="text/css">
+    
+    <script src="/public/three/js/three.min.js"></script>
+    
+    <script src="/public/three/js/OBJLoader.js"></script>
+    <script src="/public/three/js/FBXLoader.js"></script>
+    <script src="/public/three/js/Projector.js"></script>
+    <script src="/public/three/js/SVGRenderer.js"></script>
+    <script src="/public/three/js/CanvasRenderer.js"></script>
+    <script src="/public/three/js/TrackballControls.js"></script>
+    
+    <script src="/public/js/chroma.js"></script>
+    <script src="/public/js/handlebars.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone-min.js"></script>
+    <script src="https://cdn.rawgit.com/jankovicsandras/imagetracerjs/1aeb1b14/imagetracer_v1.1.2.js"></script>
+
+    <style>
+      td.x, td.y, td.z { text-align: right; width: 5em }
+      body {
+         min-height: 2000px;
+         padding-top: 70px;
+      }
+
+    </style>
+  </head>
+  <body>
+    %= include 'layouts/menu'
+    <div class="container-fluid">
+      <%= content %>
+    </div>
+  </body>
+</html>

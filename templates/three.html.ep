@@ -1,0 +1,15 @@
+% unless ($partial) { layout 'default' }
+<div class="row renderers" id="one_and_three">
+  <div id="renderer_1" class="col-md-7 col-md-offset-1"></div>
+  <div id="renderer_2" class="col-md-3 col-md-offset-0"></div>
+  <div id="renderer_3" class="col-md-3 col-md-offset-0"></div>
+  <div id="renderer_4" class="col-md-3 col-md-offset-0"></div>
+</div>
+% unless ($partial) {
+<script>
+  var heights = ['100%', '33%', '33%', '33%'];
+  var zooms   = [1.2, 1.2, 1.2, 1.2];
+</script>
+<script src="/public/app/obj_multiple.js"></script>
+<script src="/public/app/obj_clicker.js"></script>
+% }
