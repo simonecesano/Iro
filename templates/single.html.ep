@@ -1,10 +1,9 @@
-% unless ($partial) { layout 'default' }
-<style>
-  .renderer, #parts * { border: thin solid grey }
-</style>
+% unless ($partial) {
+  layout 'default'
+% }
 <div class="row" id="one_and_three">
   <div id="parts" class="col-md-1 col-md-offset-0"></div>
-  <div id="renderer_1" class="col-md-8 col-md-offset-0 renderer"></div>
+  <div id="renderer_1" class="col-md-9 col-md-offset-0 renderer"></div>
   <div id="colors" class="col-md-1 col-md-offset-0"></div>
 </div>
 % unless ($partial) {

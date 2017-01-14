@@ -26,25 +26,5 @@ get '/c/:goop' => sub {
     $c->render(template => $c->param('goop') );
 };
 
-# get '/c/four' => sub {
-#     my $c = shift;
-#     $c->render(template => 'four' );
-# };
-
-# get '/c/three' => sub {
-#     my $c = shift;
-#     $c->render(template => 'one_and_three' );
-# };
-
-# get '/c/lots' => sub {
-#     my $c = shift;
-#     $c->render(template => 'lots' );
-# };
-
-# get '/c/trace' => sub {
-#     my $c = shift;
-#     $c->render(template => 'trace' );
-# };
-
 app->start;
 __DATA__

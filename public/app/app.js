@@ -7,6 +7,9 @@ Iro = function(){
     this.cameras = [];
     this.lights = [];
     this.opts = {};
+
+    this.selection = {};
+    this.activeRendererNumber = 0;
     
     this.obj = undefined;
     
@@ -81,9 +84,11 @@ Iro = function(){
         object.scale.x = 170;
         object.scale.y = 170;
         object.scale.z = 170;
-	
+
+	this.scene.remove( this.obj );
         this.obj = object;
 	this.scene.add( this.obj );
+	this.initEvents();
     }
     
     this.render = function(){
@@ -120,9 +125,63 @@ Iro = function(){
 	    camera.updateProjectionMatrix();
 	})
     }
-
+    
     return this;
 }
+
+Iro.prototype.initEvents = function(){
+    var renderers = this.renderers;
+    var cameras   = this.cameras;
+    var obj       = this.obj;
+    var iro       = this;
+    
+    _.each(renderers, function(e, i) {
+	console.log(e);
+	e.domElement.addEventListener('mousedown', function(event) {
+	    // var bb = this.getBoundingClientRect();
+	    iro.activeRendererNumber = i;
+	    
+	    var camera = cameras[i];
+	    var vector = new THREE.Vector3(
+	    	  (event.layerX) / this.width  * 2 - 1,
+	    	- (event.layerY) / this.height * 2 + 1,
+	    	0
+	    );
+	    vector.unproject(camera);
+	    
+	    var raycaster = new THREE.Raycaster(
+		camera.position,
+		vector.sub(camera.position).normalize()
+	    );
+	    
+	    var intersects = raycaster.intersectObjects(obj.children);
+	    if (intersects.length) {
+		var r = Math.random(); var g = Math.random(); var b = Math.random();
+		var c = chroma(r * 256, g * 256, b * 256);
+		iro.toggleSelection(intersects[0].object, event.shiftKey)
+		intersects[0].object.material.color.setRGB (r, g, b);
+		console.log(intersects[0].object.id)
+	    } else {
+		// console.log('nothing here'); console.log(vector);
+	    }
+	}, false)
+    })
+};
+
+Iro.prototype.toggleSelection = function(object, addMode){
+    if (addMode) {
+	this.selection[object.id] = this.selection[object.id] ? this.selection[object.id]++ : 1;
+    } else {
+	this.selection = {}
+	this.selection[object.id] = 1
+    }
+    console.log(this.selection)
+}
+
+Iro.prototype.selectedIDs = function(){
+    return _.keys(this.selection);
+}
+
 
 IroPage = function(){
     this.containers = [];
@@ -142,4 +201,37 @@ IroPage = function(){
     return this;
 }
 
+IroPage.prototype.addPalette = function(target, palette){
+    var template =
+	Handlebars.compile([ '<style>.swatch {width:1em;height:1em;padding:1px;display:inline-block}</style>',
+			     '<div>{{#each palette}}',
+			     '<div class="swatch" data-rgb="{{ rgb }}" style="background-color:{{ rgb }}">&emsp;</div>',
+			     '{{/each}}</div>' ].join("\n"))
+    var data = {};
+    data.palette = _.map(palette, function(e, i){
+	if (typeof e !== 'object') { e = { rgb: e, name: "" } }
+	return e;
+    })
+    console.log(data);
+    console.log(template(data));
+    $(target).html(template(data))
+    $('.swatch').on('click', function(){
+	// console.log(iro.obj);
+	var c = chroma($(this).data('rgb'));
+	// console.log(c.css());
+	var all_ids = [];
+	iro.obj.traverse( function ( child ) {
+	    all_ids.push(child.id)
+	})
+	// console.log(all_ids);
 
+	var ids = iro.selectedIDs();
+	
+	_.each(ids, function(e, i){
+	    // console.log(e);
+	    var o = iro.scene.getObjectById( parseInt(e), false );
+	    // console.log(o);
+	    o.material.color.setStyle(c.css())
+	})
+    })
+}

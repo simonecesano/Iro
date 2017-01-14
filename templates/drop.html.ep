@@ -1,7 +1,7 @@
+% unless ($partial) { layout 'default' }
 <script>
   var render_on = false;
     $(function(){
-	$('.renderers').hide();
 	
 	var dropzone = document.getElementById('dropzone');
 	
@@ -12,7 +12,6 @@
 	    e.dataTransfer.dropEffect = 'copy';
 	});
 	
-// Get file data on drop
 	dropzone.addEventListener('drop', function(e) {
 	    e.stopPropagation();
 	    e.preventDefault();
@@ -21,11 +20,9 @@
 	    var reader = new FileReader();
             reader.onload = function(e2) { // finished reading file data.
                 src = e2.target.result;
-		$('.renderers').show();
-		$('#dropcontainer').hide();
-                console.log(src.length);
-		render_on = true;
-		init(src)
+		console.log(src.length);
+		iro.addObject(src)
+		location.hash = "#single";
             }
             reader.readAsText(file);
 	});

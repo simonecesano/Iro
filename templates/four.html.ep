@@ -2,10 +2,9 @@
 <div class="row renderers">
   <div id="renderer_1" class="col-md-5 col-md-offset-1"></div>
   <div id="renderer_2" class="col-md-5 col-md-offset-0"></div>
-</div>
-<div class="row renderers">
   <div id="renderer_3" class="col-md-5 col-md-offset-1"></div>
   <div id="renderer_4" class="col-md-5 col-md-offset-0"></div>
+  <div id="colors" class="col-md-1 col-md-offset-0"></div>
 </div>
 <script>
   var heights = ['50%', '50%', '50%', '50%'];
