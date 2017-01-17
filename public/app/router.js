@@ -4,11 +4,11 @@ var delta = clock.getDelta(); // seconds.
 var iroPage = new IroPage();
 
 var colors = ['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#b15928'];
-$.get('/c/nbs-iscc-tc', function(d){ colors = d } );
+$.get('/c/nbs-iscc-tc', function(d){ colors = d.slice(0, 48) } );
 
 var iro = new Iro();
-var file = '/public/obj/Superstar.obj';
-$.get(file, function(d){ iro.addObject(d) } );
+// var file = '/public/obj/Superstar.obj';
+// $.get(file, function(d){ iro.addObject(d) } );
 
 var offsets = {
     side:    { x: 0, y: 0, z: 70 },
