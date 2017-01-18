@@ -64,7 +64,9 @@ Iro = function(){
 	})
     }
 
-    this.addObject = function(object_string){
+    this.addObject = function(object_string, index){
+	if (index === undefined) { index = 0 };
+	
 	var manager = new THREE.LoadingManager();
 	var loader = new THREE.OBJLoader( manager );
 	var object = loader.parse(object_string);
@@ -73,9 +75,9 @@ Iro = function(){
 	object.traverse( function ( child ) {
 	    if ( child instanceof THREE.Mesh ) {
 		child.material = material.clone();
-		var r = Math.random(); var g = Math.random(); var b = Math.random();
+		var r = 0.7; var g = 0.7; var b = 0.7;
 		
-		var c = chroma(r * 256, g * 256, b * 256);
+		var c = chroma(0.7, 0.7, 0.7);
 		child.material.color.setRGB (r, g, b);
 		count++;
 	    }
@@ -159,7 +161,7 @@ Iro.prototype.initEvents = function(){
 		var r = Math.random(); var g = Math.random(); var b = Math.random();
 		var c = chroma(r * 256, g * 256, b * 256);
 		iro.toggleSelection(intersects[0].object, event.shiftKey)
-		intersects[0].object.material.color.setRGB (r, g, b);
+		intersects[0].object.material.color.setRGB (0.9, 0.9, 0.9);
 		console.log(intersects[0].object.id)
 	    } else {
 		// console.log('nothing here'); console.log(vector);
