@@ -1,6 +1,5 @@
 #!/usr/bin/env perl
 use Mojolicious::Lite;
-# 8331ADD5A0B2
 
 hook(before_routes => sub {
 	 my $c = shift;
