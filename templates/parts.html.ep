@@ -6,8 +6,6 @@
 <div class="row" id="one_and_three">
   <div id="parts" class="col-md-1 col-md-offset-0"></div>
   <div id="renderer_1" class="col-md-9 col-md-offset-0 renderer"></div>
-  // <div id="tracer_1" class="col-md-9 col-md-offset-1 tracer"></div>
-  <div id="vector_1" class="col-md-9 col-md-offset-1 tracer"></div>
 </div>
 % unless ($partial) {
 <script>
@@ -21,63 +19,89 @@
     // copy WebGL image into canvas
 
     $(function(){
+	// var canvas = document.createElement('canvas');
+	iro.render();
+	$('.tracer').remove();
+	var renderer = iro.renderers[0];
+
 	$('#menu_materials').click(function(event){
 	    event.stopPropagation();
-
+	    
 	    var part_ids = [];
-	    iro.obj.traverse( function ( child ) { part_ids.push(child.id); child.visible = false })
+	    iro.obj.traverse( function ( child ) {
+		part_ids.push(child.id);
+		if ( child instanceof THREE.Mesh) {
+		    child.material.transparent = true;
+		    child.material.opacity = 0;
+		}
+	    })
 	    console.log(part_ids);
 	    console.log('here')
 
 	    _.each(part_ids, function(e, i){
-	    	console.log(e);
-		console.log(i);
-	    	iro.obj.traverse( function ( child ) {
-	    	    console.log(child.id)
-	    	    console.log(child.id == e)
-		    var img_el = $('<div id="part' +  i + '" class="col-md-9 col-md-offset-1 tracer"></div>')
-		    
-		    setTimeout(function(){ child.visible = (child.id == e) }, i * 500)
-	    	})
 
+		if ( iro.scene.getObjectById(e) instanceof THREE.Mesh ) {
+		    // _.each(part_ids, function(k, i){
+		    // })
+		    
+		    var canvas_el = $('<div id="vector' +  i + '" class="col-md-9 col-md-offset-1 tracer"></div>');
+		    var canvas = document.createElement('canvas');
+		    canvas.width = $(renderer.domElement).width();
+		    canvas.height = $(renderer.domElement).height();
+		    var ctx = canvas.getContext("2d");
+
+		    canvas_el.append(canvas);
+		    // canvas_el.hide();
+		    
+		    $('#one_and_three').append(canvas_el);
+
+		    iro.scene.getObjectById(e).visible = true;
+		    var mat = iro.scene.getObjectById(e).material.clone();
+
+		    iro.scene.getObjectById(e).material.color.setRGB (0, 0, 0);
+		    iro.scene.getObjectById(e).material.transparent = false;
+		    iro.scene.getObjectById(e).material.opacity = 1;
+		    
+		    iro.render();
+
+		    var dataURL = renderer.domElement.toDataURL()
+		    
+		    // var img_el = $('<div id="part' + e + '" class="col-md-9 col-md-offset-1 tracer"></div>')
+		    var image = new Image();
+		    image.onload = function() {
+	    		console.log('Part ' + e);
+			console.log('i ' + i);
+			
+	    		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	    		ctx.drawImage(image, 0, 0)
+
+			var imgd = ImageTracer.getImgdata( canvas );
+			var svgstr = ImageTracer.imagedataToSVG( imgd, { scale: 1 } );
+			var svg_el = $('<div id="vector' +  i + '" class="col-md-9 col-md-offset-1 tracer"></div>').html(svgstr)
+			$('#one_and_three').append(svg_el);
+		    };
+		    
+		    image.src = iro.dataURLs[0];
+		    // iro.scene.getObjectById(e).visible = true;
+		    iro.scene.getObjectById(e).material = mat;
+		}
 	    })
-	    // iro.obj.traverse( function ( child ) { child.visible = true })
+	    iro.obj.traverse( function ( child ) { child.visible = true })
+	    iro.render();
 	})
 
 	$('#menu_colors').click(function(event){
-	    var img_el = $('<div id="tracer' +  1 + '" class="col-md-9 col-md-offset-1 tracer"></div>')
-	    $('#one_and_three').append(img_el);
-	    var canvas = document.createElement('canvas');
-	    img_el.append(canvas);
-	    img_el.hide();
-	    
-	    var renderer = iro.renderers[0];
-
-	    canvas.width = $(renderer.domElement).width();
-	    canvas.height = $(renderer.domElement).height();
-	    
-	    var ctx = canvas.getContext("2d");
 	    var image = new Image();
 	    image.onload = function() {
-		
-	    	console.log({ width: image.width, height: image.height })
-	    	console.log({ width: canvas.width, height: canvas.height })
 	    	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	    	ctx.drawImage(image, 0, 0)
 		var imgd = ImageTracer.getImgdata( canvas );
-		
-		// Synchronous tracing to SVG string
 		var svgstr = ImageTracer.imagedataToSVG( imgd, { scale: 1 } );
-		console.log(svgstr);
-		// ImageTracer.appendSVGString( svgstr, 'vector_1' );
-		$('#vector_1').html(svgstr)
-		
-
+		var img_el = $('<div id="vector' +  1 + '" class="col-md-9 col-md-offset-1 tracer"></div>').html(svgstr)
+		$('#one_and_three').append(img_el);
 	    };
-	    image.src = iro.renderers[0].domElement.toDataURL()
+	    image.src = renderer.domElement.toDataURL()
 	})
-
-	
     })
 
 </script>
