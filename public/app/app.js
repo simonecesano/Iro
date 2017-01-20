@@ -1,13 +1,14 @@
 Iro = function(){
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color( 0xffffff );
-
+    
     this.renderers = [];
-
+    this.interval = 0;
     this.cameras = [];
     this.lights = [];
     this.opts = {};
-
+    this.dataURLs = [];
+    
     this.selection = {};
     this.activeRendererNumber = 0;
     
@@ -21,7 +22,9 @@ Iro = function(){
 
     this.addRenderers = function(containers){
 	this.renderers = _.map(containers, function(e, i){
-    	    var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+	    var foo = new Iro.renderer();
+	    
+    	    var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
     	    renderer.setSize( $(e).width(), $(e).height() );
     	    e.appendChild( renderer.domElement );
     	    return renderer;
@@ -111,6 +114,8 @@ Iro = function(){
 	    })
 	    camera.lookAt( look_at );
 	    e.render( iro.scene, camera );
+	    // console.log(e.domElement.toDataURL())
+	    iro.dataURLs[i] = e.domElement.toDataURL();
 	})
 
     }
@@ -184,6 +189,17 @@ Iro.prototype.selectedIDs = function(){
     return _.keys(this.selection);
 }
 
+Iro.prototype.animate = function() {
+    var iro = this;
+    if (this.interval) {
+	setTimeout( function() {
+            requestAnimationFrame( function(){ iro.animate() });
+	}, 1000 * iro.interval );
+	iro.render();
+    } else {
+	iro.render();
+    }
+}
 
 IroPage = function(){
     this.containers = [];
@@ -214,8 +230,8 @@ IroPage.prototype.addPalette = function(target, palette){
 	if (typeof e !== 'object') { e = { rgb: e, name: "" } }
 	return e;
     })
-    console.log(data);
-    console.log(template(data));
+    // console.log(data);
+    // console.log(template(data));
     $(target).html(template(data))
     $('.swatch').on('click', function(){
 	// console.log(iro.obj);
