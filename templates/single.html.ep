@@ -5,6 +5,9 @@
   <div id="parts" class="col-md-1 col-md-offset-0"></div>
   <div id="renderer_1" class="col-md-9 col-md-offset-0 renderer"></div>
   <div id="colors" class="col-md-1 col-md-offset-0"></div>
+  <div id="materials" class="col-md-1 col-md-offset-0">
+    <button id="material" class="btn btn-default" type="submit">material</button>
+  </div>
 </div>
 % unless ($partial) {
 <script>
@@ -14,3 +17,32 @@
 <script src="/public/app/obj_multiple.js"></script>
 <script src="/public/app/obj_clicker.js"></script>
 % }
+<script>
+  $(function(){
+      $('#material').on('click', function(){
+	  console.log('material')
+	  var texture = new THREE.TextureLoader().load( '/public/textures/GJSX9188.jpg',
+							function(texture){
+							    texture.wrapS = THREE.RepeatWrapping;
+							    texture.wrapT = THREE.RepeatWrapping;
+							    texture.repeat.set( 30, 30 );
+							    var count = 0;
+							    
+							    iro.obj.traverse( function ( child ) {
+								if ( child instanceof THREE.Mesh ) {
+								    // var material = child.material.clone()
+								    var material =
+									new THREE.MeshLambertMaterial({
+									    color: child.material.color,
+									    map: texture
+									});
+								    // child.material = material.clone();
+								    child.material = material;
+								    count++;
+								    console.log(child.material)
+								}
+							    } );
+							});
+      })
+  })
+</script>
