@@ -79,6 +79,7 @@
 			var svgstr = ImageTracer.imagedataToSVG( imgd, { scale: 1 } );
 			var svg_el = $('<div id="vector' +  i + '" class="col-md-9 col-md-offset-1 tracer"></div>').html(svgstr)
 			$('#one_and_three').append(svg_el);
+			// console.log(svg_el.find('svg'))
 		    };
 		    
 		    image.src = iro.dataURLs[0];
