@@ -1,3 +1,6 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.3/fabric.js"></script>
+<script src="https://cdn.rawgit.com/riccardoscalco/textures/master/textures.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg.js"></script>
 % unless ($partial) {
   layout 'default'
 % }
@@ -7,7 +10,20 @@
   <div id="colors" class="col-md-1 col-md-offset-0"></div>
   <div id="materials" class="col-md-1 col-md-offset-0">
     <button id="material" class="btn btn-default" type="submit">material</button>
-  </div>
+    <button id="svg" class="btn btn-default" type="submit">svg</button>
+    <div id="scg">
+      <svg width="20" height="20"><defs><pattern id="uanrb" patternUnits="userSpaceOnUse" width="20" height="20">
+	    <path d="M 0,20 l 20,-20 M -5,5 l 10,-10
+		     M 15,25 l 10,-10" stroke-width="2" shape-rendering="auto" stroke="#343434"
+		  stroke-linecap="square"></path></pattern></defs>
+	<path d="M 0 0 L 0 140 L 140 140 L 140 0 Z"
+	      style="fill: url(&quot;#uanrb&quot;) none;">
+	</path>
+      </svg>
+    </div>
+    <div id="cnv">
+      <canvas id="texture" width="20" height="20"></canvas>
+    </div>
 </div>
 % unless ($partial) {
 <script>
@@ -19,6 +35,47 @@
 % }
 <script>
   $(function(){
+      $('#svg').on('click', function(){
+	  console.log('svg');
+	  var svg = document.getElementById("scg").querySelector("svg");
+	  var svgData = (new XMLSerializer()).serializeToString(svg);
+	  
+	  var canvas = document.createElement("canvas");
+	  var svgSize = svg.getBoundingClientRect();
+	  canvas.width = svgSize.width;
+	  canvas.height = svgSize.height;
+	  var ctx = canvas.getContext("2d");
+	  
+	  var img = document.createElement("img");
+	  img.setAttribute("src", "data:image/svg+xml;base64," + window.btoa(unescape(encodeURIComponent(svgData))) );	  
+	  img.onload = function() {
+	      ctx.drawImage(img, 0, 0);
+	      
+	      var texture = new THREE.Texture(canvas);
+	      texture.needsUpdate = true;
+	      texture.wrapS = THREE.RepeatWrapping;
+	      texture.wrapT = THREE.RepeatWrapping;
+	      texture.repeat.set( 70, 70 );
+
+	      var count = 0;
+	      iro.obj.traverse( function ( child ) {
+		  if ( child instanceof THREE.Mesh ) {
+		      // var material = child.material.clone()
+		      var material =
+			  new THREE.MeshLambertMaterial({
+			      color: child.material.color,
+			      map: texture
+			  });
+		      // child.material = material.clone();
+		      child.material = material;
+		      count++;
+		      console.log(child.material)
+		  }
+	      } );
+	  };
+      })
+      
+      
       $('#material').on('click', function(){
 	  console.log('material')
 	  var texture = new THREE.TextureLoader().load( '/public/textures/GJSX9188.jpg',
