@@ -114,7 +114,7 @@ Iro = function(){
 	    })
 	    camera.lookAt( look_at );
 	    e.render( iro.scene, camera );
-	    // console.log(e.domElement.toDataURL())
+	    console.log(e.domElement.toDataURL())
 	    iro.dataURLs[i] = e.domElement.toDataURL();
 	})
 
@@ -187,6 +187,28 @@ Iro.prototype.toggleSelection = function(object, addMode){
 
 Iro.prototype.selectedIDs = function(){
     return _.keys(this.selection);
+}
+
+Iro.renderer = function(container) {
+    this.obj = undefined;
+
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color( 0xffffff );
+
+    this.renderers = [];
+
+    this.cameras = [];
+    this.lights = [];
+    this.opts = {};
+
+    this.selection = {};
+    this.activeRendererNumber = 0;
+    
+    this.obj = undefined;
+
+    this.materials = {};
+    
+    return this;
 }
 
 Iro.prototype.animate = function() {
