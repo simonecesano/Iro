@@ -18,7 +18,7 @@
 	    </li>
 	    <li class="dropdown">
 	      <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">parts <span class="caret"></span></a>
-	      <ul class="dropdown-menu"><li><a href="#" id="menu_group">group        </a></li>
+	      <ul class="dropdown-menu"><li><a href="#" id="menu_group">group</a></li>
 		<li><a href="#" id="menu_ungroup">ungroup</a></li>
 	      </ul>
 	    </li>
