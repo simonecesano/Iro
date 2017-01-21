@@ -59,6 +59,28 @@
 	    // var svgstr = ImageTracer.imagedataToSVG( imageData, { scale: 1 } );
 	    // return svgstr;
 	}
+
+	var getSVG = function(pixels, gl){
+	    var imageData = new ImageData(Uint8ClampedArray.from(pixels), gl.drawingBufferWidth, gl.drawingBufferHeight);
+	    var svgstr = ImageTracer.imagedataToSVG( imageData, { scale: 1 } );
+	    return svgstr;
+	}
+
+	var imgToSVG = function(pixels, gl) {
+	    console.log('here');
+	    var promise = new Promise(
+		function resolver(resolve, reject) {
+		    var imageData = new ImageData(Uint8ClampedArray.from(pixels), gl.drawingBufferWidth, gl.drawingBufferHeight);
+		    var svgstr = ImageTracer.imagedataToSVG( imageData, { scale: 1 } );
+		    console.log(svgstr);
+		    return svgstr;
+		}
+	    );
+	    promise.then(function (svgstr) {
+	    	console.log(svgstr);
+	    });
+	    return promise;
+	}
 	
 	$('#svg').click(function(){
 	    console.log('on svg');
@@ -79,6 +101,12 @@
 		    child.material = white;
 		})
 	    }
+
+	    
+	    var promises = _.map(pixels, function(e, i){
+		getSVG(e, renderer.domElement.getContext("webgl"))
+	    })
+	    Promise.all(promises).then(function(foo){ console.log('done ' + foo.length) })
 	    console.log(pixels.length);
 	})
     })
