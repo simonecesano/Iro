@@ -37,6 +37,19 @@
 	    var imgd = ImageTracer.getImgdata( canvas );
 	    var svgstr = ImageTracer.imagedataToSVG( imgd, { scale: 1 } );
 	    console.log(svgstr);
+	    var svg = $.parseXML( svgstr )
+	    var xml = (new DOMParser()).parseFromString(svgstr, "text/xml")
+
+	    svg = $(svg);
+	    svg.find('path')
+		.attr('fill', 'none')
+	    	.attr('stroke-width', '0.5')
+		.attr('stroke', 'rgb(0,0,0)');
+	    try { console.log((new XMLSerializer()).serializeToString(xml) ) } catch (e) { console.log(e) }
+	    try { console.log((new XMLSerializer()).serializeToString(svg.get(0)) ) } catch (e) { console.log(e) }
+	    console.log( svg.first() );
+	    console.log( svg.get(0) );
+	    console.log( svg.text() );
 	}
 	
 	$('#svg').click(function(){
