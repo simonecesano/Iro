@@ -38,109 +38,48 @@
 	var ctx = canvas.getContext("2d");
 	var complete_svg;
 
-	// var snap = Snap($(renderer.domElement).width(), $(renderer.domElement).height());
-
-	var image = new Image();
-	image.onload = function() {
-	    ctx.clearRect(0, 0, canvas.width, canvas.height);
-	    ctx.drawImage(image, 0, 0)
+	
+	var getPixels = function(gl){
+	    var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+	    // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/readPixels
+	    gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
 	    
-	    var imgd = ImageTracer.getImgdata( canvas );
-
-	    var svgstr = ImageTracer.imagedataToSVG( imgd, { scale: 1 } );
-	    var svg = $.parseXML( svgstr )
-	    // var xml = (new DOMParser()).parseFromString(svgstr, "text/xml")
-
-	    svg = $(svg);
-	    $(svg).attr('viewBox', '0 0 ' + canvas.width + ' ' + canvas.height);
-	    svg.find('path')
-		.attr('fill', 'none')
-	    	.attr('stroke-width', '0.5')
-		.attr('stroke', 'rgb(0,0,0)');
-	    // need to add viewbox
+	    // https://developer.mozilla.org/en-US/docs/Web/API/ImageData/ImageData
+	    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray
+	    // var imageData = new ImageData(Uint8ClampedArray.from(pixels), gl.drawingBufferWidth, gl.drawingBufferHeight);
+	    var imageData;
 	    
-	    var xml = svg.get(0);
-
-	    console.clear();
-	    if (complete_svg === undefined) {
-		console.log('###############################')
-		xml.documentElement.setAttribute('viewBox', '0 0 ' + canvas.width + ' ' + canvas.height);
-		xml.documentElement.setAttribute('width', '100%');
-		xml.documentElement.setAttribute('height', '100%');
-		// xml.documentElement.setAttribute('preserveAspectRatio', 'xMinYMin');
-		complete_svg = xml
-	    } else {
-		var node;
-		while (xml.documentElement.hasChildNodes()) {
-		    node = xml.documentElement.childNodes[0];
-		    complete_svg.documentElement.appendChild(node); 
-		}
-	    }
-	    try {
-		var svgstring = (new XMLSerializer()).serializeToString(complete_svg)
-		console.log(svgstring)
-		$('#svg_1').html(svgstring)
-	    } catch (e) { console.log(e) }
-	    // try { console.log((new XMLSerializer()).serializeToString(complete_svg) ) } catch (e) { console.log(e) }
+	    // console.log(pixels);
+	    // console.log(imageData.data);
+	    
+	    // console.log(gl.drawingBufferWidth * gl.drawingBufferHeight * 4 );
+	    
+	    // console.log(imageData.data);
+	    return pixels;
+	    // var svgstr = ImageTracer.imagedataToSVG( imageData, { scale: 1 } );
+	    // return svgstr;
 	}
 	
 	$('#svg').click(function(){
 	    console.log('on svg');
 	    var white = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
 	    var black = new THREE.MeshBasicMaterial({ color: 0x000000 });
+
+	    iro.obj.traverse( function ( child ) {
+		if ( child instanceof THREE.Mesh) { part_ids.push(child.id); child.material = white }
+	    })
+	    var pixels = [];
+	    console.log(part_ids.length);
 	    if (part_ids.length) {
 		_.each(part_ids, function(e, i){
-		    if ( iro.scene.getObjectById(e) instanceof THREE.Mesh ) {
-			var child = iro.scene.getObjectById(e);
-			if (i == idx) {
-			    // console.log('foo ' + i + ' ' + idx)
-			    child.material = black;
-			} else {
-			    // console.log('bar ' + i + ' ' + idx)
-			    child.material = white;
-			}
-		  }
+		    var child = iro.scene.getObjectById(e);
+		    child.material = black;
+		    iro.render();
+		    pixels.push(getPixels(renderer.domElement.getContext("webgl")));
+		    child.material = white;
 		})
-		iro.render();
-		console.log(renderer.domElement);
-		image.src = iro.dataURLs[0];
-		idx++;
-		if (idx > part_ids.length) { part_ids = []; idx = 0 }
-	    } else {
-		var material = new THREE.MeshBasicMaterial({ color: 0xcc0000 });
-		iro.obj.traverse( function ( child ) {
-		    if ( child instanceof THREE.Mesh) {
-			part_ids.push(child.id);
-			child.material = material;
-		    }
-		})
-		iro.render();
-		console.clear();
-		try {
-		    var gl = renderer.domElement.getContext("webgl");
-
-		    // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/readPixels
-		    var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
-		    gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-
-		    // https://developer.mozilla.org/en-US/docs/Web/API/ImageData/ImageData
-		    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray
-		    var imageData = new ImageData(Uint8ClampedArray.from(pixels), gl.drawingBufferWidth, gl.drawingBufferHeight);
-
-		    console.log(pixels);
-		    console.log(imageData.data);
-
-		    console.log(gl.drawingBufferWidth * gl.drawingBufferHeight * 4 );
-
-		    console.log(imageData.data);
-		    var svgstr = ImageTracer.imagedataToSVG( imageData, { scale: 1 } );
-		    console.log(svgstr);
-		    console.log(renderer.domElement);
-		} catch(e) { console.log(e) } 
-		// console.log(iro.dataURLs[0]);
-		console.log(part_ids);
-		console.log('here')
 	    }
+	    console.log(pixels.length);
 	})
     })
 </script>
