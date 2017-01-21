@@ -63,11 +63,10 @@
 		    complete_svg.documentElement.appendChild(node); 
 		}
 	    }
-	    // $('#svg_1').innerHTML()
 	    try {
-		var svgstring = (new XMLSerializer()).serializeToString(svg.get(0))
+		var svgstring = (new XMLSerializer()).serializeToString(complete_svg)
 		console.log(svgstring)
-		//$('#svg_1').innerHTML(svgstring)
+		$('#svg_1').html(svgstring)
 	    } catch (e) { console.log(e) }
 	    try { console.log((new XMLSerializer()).serializeToString(complete_svg) ) } catch (e) { console.log(e) }
 	}
