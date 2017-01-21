@@ -55,22 +55,47 @@
 		.attr('fill', 'none')
 	    	.attr('stroke-width', '0.5')
 		.attr('stroke', 'rgb(0,0,0)');
-	    svg.attr('viewBox', '0 0 ' + canvas.width + ' ' + canvas.height);
+
+	    $(svg).attr('viewBox', '0 0 ' + canvas.width + ' ' + canvas.height);
 	    
 	    var xml = svg.get(0);
 
 	    if (SVGoutput) {
+		xml.documentElement.childNodes[0].remove()
+
+		var g = SVGoutput.createElement('g');
+		
 		var node;
 		while (xml.documentElement.hasChildNodes()) {
 		    node = xml.documentElement.childNodes[0];
-		    SVGoutput.documentElement.appendChild(node);
+		    g.appendChild(node);
 		}
+		SVGoutput.documentElement.appendChild(g);
+
 		var svgstring = (new XMLSerializer()).serializeToString(SVGoutput)
-		$('#svg_1').html(svgstring)
 	    } else {
+		xml.documentElement.childNodes[0].remove()
 		SVGoutput = xml;
+		SVGoutput.documentElement.setAttribute('viewBox',
+						       [
+							   0,
+							   0,
+							   SVGoutput.documentElement.getAttribute('width'),
+							   SVGoutput.documentElement.getAttribute('height')
+						       ].join(' '));
+		
+
+		var g = SVGoutput.createElement('g');
+		var node;
+		while (xml.documentElement.hasChildNodes()) {
+		    node = xml.documentElement.childNodes[0];
+		    g.appendChild(node);
+		}
+		SVGoutput.documentElement.appendChild(g);
+		var svgstring = (new XMLSerializer()).serializeToString(SVGoutput)
 	    }
-	    console.log(SVGoutput);
+	    $('#svg_1').html(svgstring)
+	    console.log(svgstring)
 	}
 	
 	
