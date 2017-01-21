@@ -1,6 +1,8 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/keypress/2.1.4/keypress.min.js"></script>
 <script src="https://cdn.rawgit.com/jankovicsandras/imagetracerjs/1aeb1b14/imagetracer_v1.1.2.js"></script>
+<script src="/public/js/hamsters.js"></script>
+
+
 % unless ($partial) {
     layout 'default'
 % }
@@ -27,60 +29,50 @@
 <script src="/public/app/obj_clicker.js"></script>
 % }
 <script>
+    var getPixels = function(gl){
+	// https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/readPixels
+	var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+	gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+	return pixels;
+    };
+
     $(function(){
 	var renderer = iro.renderers[0];
 	var part_ids = [];
+	var SVGs = [];
+	var SVGoutput;
 	var idx = 0
 	var canvas = document.createElement('canvas');
-	
 	canvas.width = $(renderer.domElement).width();
 	canvas.height = $(renderer.domElement).height();
-	var ctx = canvas.getContext("2d");
-	var complete_svg;
 
-	
-	var getPixels = function(gl){
-	    var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
-	    // https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/readPixels
-	    gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+	var tracer = new Worker("/public/js/tracer.js");
+	tracer.onmessage = function(e) {
+	    var svgstr = e.data
+	    var svg = $.parseXML( svgstr )
+	    svg = $(svg);
+	    svg.find('path')
+		.attr('fill', 'none')
+	    	.attr('stroke-width', '0.5')
+		.attr('stroke', 'rgb(0,0,0)');
+	    svg.attr('viewBox', '0 0 ' + canvas.width + ' ' + canvas.height);
 	    
-	    // https://developer.mozilla.org/en-US/docs/Web/API/ImageData/ImageData
-	    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray
-	    // var imageData = new ImageData(Uint8ClampedArray.from(pixels), gl.drawingBufferWidth, gl.drawingBufferHeight);
-	    var imageData;
-	    
-	    // console.log(pixels);
-	    // console.log(imageData.data);
-	    
-	    // console.log(gl.drawingBufferWidth * gl.drawingBufferHeight * 4 );
-	    
-	    // console.log(imageData.data);
-	    return pixels;
-	    // var svgstr = ImageTracer.imagedataToSVG( imageData, { scale: 1 } );
-	    // return svgstr;
-	}
+	    var xml = svg.get(0);
 
-	var getSVG = function(pixels, gl){
-	    var imageData = new ImageData(Uint8ClampedArray.from(pixels), gl.drawingBufferWidth, gl.drawingBufferHeight);
-	    var svgstr = ImageTracer.imagedataToSVG( imageData, { scale: 1 } );
-	    return svgstr;
-	}
-
-	var imgToSVG = function(pixels, gl) {
-	    console.log('here');
-	    var promise = new Promise(
-		function resolver(resolve, reject) {
-		    var imageData = new ImageData(Uint8ClampedArray.from(pixels), gl.drawingBufferWidth, gl.drawingBufferHeight);
-		    var svgstr = ImageTracer.imagedataToSVG( imageData, { scale: 1 } );
-		    console.log(svgstr);
-		    return svgstr;
+	    if (SVGoutput) {
+		var node;
+		while (xml.documentElement.hasChildNodes()) {
+		    node = xml.documentElement.childNodes[0];
+		    SVGoutput.documentElement.appendChild(node);
 		}
-	    );
-	    promise.then(function (svgstr) {
-	    	console.log(svgstr);
-	    });
-	    return promise;
+		var svgstring = (new XMLSerializer()).serializeToString(SVGoutput)
+		$('#svg_1').html(svgstring)
+	    } else {
+		SVGoutput = xml;
+	    }
+	    console.log(SVGoutput);
 	}
+	
 	
 	$('#svg').click(function(){
 	    console.log('on svg');
@@ -92,22 +84,24 @@
 	    })
 	    var pixels = [];
 	    console.log(part_ids.length);
+
 	    if (part_ids.length) {
 		_.each(part_ids, function(e, i){
 		    var child = iro.scene.getObjectById(e);
 		    child.material = black;
 		    iro.render();
-		    pixels.push(getPixels(renderer.domElement.getContext("webgl")));
+		    var gl = renderer.domElement.getContext("webgl");
+		    tracer.postMessage({
+			pixels: getPixels(gl),
+			width: gl.drawingBufferWidth, 
+			height: gl.drawingBufferHeight
+		    });
+		    pixels.push(1)
 		    child.material = white;
 		})
 	    }
-
-	    
-	    var promises = _.map(pixels, function(e, i){
-		getSVG(e, renderer.domElement.getContext("webgl"))
-	    })
-	    Promise.all(promises).then(function(foo){ console.log('done ' + foo.length) })
-	    console.log(pixels.length);
+	    console.log('#1 pixels.length ' + pixels.length);
+	    console.log('#2 SVGs.length ' + SVGs.length);
 	})
     })
 </script>
