@@ -1,0 +1,77 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/keypress/2.1.4/keypress.min.js"></script>
+<script src="https://cdn.rawgit.com/jankovicsandras/imagetracerjs/1aeb1b14/imagetracer_v1.1.2.js"></script>
+% unless ($partial) {
+  layout 'default'
+% }
+<div class="row" id="one_and_three">
+  
+  <div id="parts" class="col-md-1 col-md-offset-0">
+    <button id="svg" class="btn btn-default" type="submit">svg</button>
+  </div>
+  <div id="renderer_1" class="col-md-9 col-md-offset-0 renderer"></div>
+</div>
+% unless ($partial) {
+<script>
+  var heights = ['100%'];
+  var zooms   = [1.5];
+</script>
+<script src="/public/app/obj_multiple.js"></script>
+<script src="/public/app/obj_clicker.js"></script>
+% }
+<script>
+    $(function(){
+	var renderer = iro.renderers[0];
+	var part_ids = [];
+	var idx = 0
+	var canvas = document.createElement('canvas');
+	canvas.width = $(renderer.domElement).width();
+	canvas.height = $(renderer.domElement).height();
+	var ctx = canvas.getContext("2d");
+
+
+	var image = new Image();
+	image.onload = function() {
+	    ctx.clearRect(0, 0, canvas.width, canvas.height);
+	    ctx.drawImage(image, 0, 0)
+	    
+	    var imgd = ImageTracer.getImgdata( canvas );
+	    var svgstr = ImageTracer.imagedataToSVG( imgd, { scale: 1 } );
+	    console.log(svgstr);
+	}
+	
+	$('#svg').click(function(){
+	    console.log('on svg');
+	    if (part_ids.length) {
+		var white = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+		var black = new THREE.MeshBasicMaterial({ color: 0x000000 });
+		_.each(part_ids, function(e, i){
+		    if ( iro.scene.getObjectById(e) instanceof THREE.Mesh ) {
+			var child = iro.scene.getObjectById(e);
+			if (i == idx) {
+			    // console.log('foo ' + i + ' ' + idx)
+			    child.material = black;
+			} else {
+			    // console.log('bar ' + i + ' ' + idx)
+			    child.material = white;
+			}
+		  }
+		})
+		iro.render();
+		image.src = iro.dataURLs[0];
+		idx++;
+		if (idx > part_ids.length) { part_ids = []; idx = 0 }
+	    } else {
+		var material = new THREE.MeshBasicMaterial({ color: 0xcc0000 });
+		iro.obj.traverse( function ( child ) {
+		    if ( child instanceof THREE.Mesh) {
+			part_ids.push(child.id);
+			child.material = material;
+		    }
+		})
+		iro.render();
+		console.log(part_ids);
+		console.log('here')
+	    }
+	})
+    })
+</script>
