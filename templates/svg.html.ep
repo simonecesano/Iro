@@ -1,3 +1,4 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/keypress/2.1.4/keypress.min.js"></script>
 <script src="https://cdn.rawgit.com/jankovicsandras/imagetracerjs/1aeb1b14/imagetracer_v1.1.2.js"></script>
 % unless ($partial) {
@@ -9,6 +10,7 @@
     <button id="svg" class="btn btn-default" type="submit">svg</button>
   </div>
   <div id="renderer_1" class="col-md-9 col-md-offset-0 renderer"></div>
+  <div id="svg_1" class="col-md-9 col-md-offset-0 renderer"></div>
 </div>
 % unless ($partial) {
 <script>
@@ -24,39 +26,50 @@
 	var part_ids = [];
 	var idx = 0
 	var canvas = document.createElement('canvas');
+	
 	canvas.width = $(renderer.domElement).width();
 	canvas.height = $(renderer.domElement).height();
 	var ctx = canvas.getContext("2d");
 	var complete_svg;
 
+	// var snap = Snap($(renderer.domElement).width(), $(renderer.domElement).height());
 
 	var image = new Image();
 	image.onload = function() {
 	    ctx.clearRect(0, 0, canvas.width, canvas.height);
 	    ctx.drawImage(image, 0, 0)
-
-	    if (complete_svg === undefined) {
-
-	    }
 	    
 	    var imgd = ImageTracer.getImgdata( canvas );
 	    var svgstr = ImageTracer.imagedataToSVG( imgd, { scale: 1 } );
 	    var svg = $.parseXML( svgstr )
-	    var xml = (new DOMParser()).parseFromString(svgstr, "text/xml")
+	    // var xml = (new DOMParser()).parseFromString(svgstr, "text/xml")
 
 	    svg = $(svg);
 	    svg.find('path')
 		.attr('fill', 'none')
 	    	.attr('stroke-width', '0.5')
 		.attr('stroke', 'rgb(0,0,0)');
-	    if (complete_svg === undefined) {
-		complete_svg = svg;
-	    } else {
-		svg.find('path').appendTo(complete_svg)
-	    }
 
-	    try { console.log((new XMLSerializer()).serializeToString(svg.get(0)) ) } catch (e) { console.log(e) }
-	    try { console.log((new XMLSerializer()).serializeToString(complete_svg.get(0)) ) } catch (e) { console.log(e) }
+	    var xml = svg.get(0);
+
+	    console.clear();
+	    if (complete_svg === undefined) {
+		console.log('###############################')
+		complete_svg = xml
+	    } else {
+		var node;
+		while (xml.documentElement.hasChildNodes()) {
+		    node = xml.documentElement.childNodes[0];
+		    complete_svg.documentElement.appendChild(node); 
+		}
+	    }
+	    // $('#svg_1').innerHTML()
+	    try {
+		var svgstring = (new XMLSerializer()).serializeToString(svg.get(0))
+		console.log(svgstring)
+		//$('#svg_1').innerHTML(svgstring)
+	    } catch (e) { console.log(e) }
+	    try { console.log((new XMLSerializer()).serializeToString(complete_svg) ) } catch (e) { console.log(e) }
 	}
 	
 	$('#svg').click(function(){
@@ -89,6 +102,7 @@
 		    }
 		})
 		iro.render();
+		console.clear();
 		console.log(part_ids);
 		console.log('here')
 	    }
