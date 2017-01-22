@@ -3,7 +3,7 @@ Iro = function(){
     this.scene.background = new THREE.Color( 0xffffff );
     
     this.renderers = [];
-    this.interval = 0;
+    this.interval = 0.1;
     this.cameras = [];
     this.lights = [];
     this.opts = {};
@@ -22,9 +22,13 @@ Iro = function(){
 
     this.addRenderers = function(containers){
 	this.renderers = _.map(containers, function(e, i){
-	    var foo = new Iro.renderer();
+	    // var foo = new Iro.renderer();
 	    
     	    var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
+	    // var renderer = THREE.CanvasRenderer();
+	    console.log(renderer)
+	    // var renderer = new THREE.SVGRenderer();
+	    renderer.setPixelRatio( window.devicePixelRatio );
     	    renderer.setSize( $(e).width(), $(e).height() );
     	    e.appendChild( renderer.domElement );
     	    return renderer;
@@ -75,6 +79,7 @@ Iro = function(){
 	var object = loader.parse(object_string);
 	var count = 0;
 	var material = new THREE.MeshLambertMaterial({ color: 0xCC0000 });
+	// var material = new THREE.MeshBasicMaterial({ color: 0xCC0000 });
 	object.traverse( function ( child ) {
 	    if ( child instanceof THREE.Mesh ) {
 		child.material = material.clone();
@@ -114,7 +119,7 @@ Iro = function(){
 	    })
 	    camera.lookAt( look_at );
 	    e.render( iro.scene, camera );
-	    console.log(e.domElement.toDataURL())
+	    // console.log(e.domElement.toDataURL())
 	    iro.dataURLs[i] = e.domElement.toDataURL();
 	})
 
