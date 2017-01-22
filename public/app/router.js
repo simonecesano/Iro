@@ -132,6 +132,25 @@ var IroRouter = Backbone.Router.extend({
 	    })
 	    iro.initEvents();
 	})
+    },
+    viewParts : function(){
+	$.get('/i/c/parts.html', function(d){
+	    $('#main').html(d)
+	    iroPage.init({ heights: [ '100%' ]});
+	    iro.init({
+		containers: iroPage.containers,
+		cameras: [
+		    { offset: offsets.side, zoom: 1.5 }
+		],
+		lights:  [
+		    { offset: { x: 0, y: 0, z: 70 },    shadowDarkness: 0, color: 0x777777 },
+		    { offset: { x: -70, y:  0, z:  0 }, shadowDarkness: 0, color: 0x777777 },
+		    { offset: { x:   0, y: 70, z:  0 }, shadowDarkness: 0, color: 0x777777 },
+		    { offset: { x: -50, y: 40, z: 70 }, shadowDarkness: 0, color: 0x777777 }
+		]
+	    })
+	    iro.initEvents();
+	})
     }
 })
 
