@@ -6,7 +6,8 @@
 	      <ul class="dropdown-menu"><li><a href="#drop" id="menu_load">load...</a></li>
 		<li><a href="#" id="menu_export_as_JSON">export as JSON</a></li>
 		<li><a href="#" id="menu_export_as_OBJ">export as OBJ</a></li>
-		<li><a href="#" id="menu_export_as_image">export as image</a></li>
+		<li><a href="#" id="menu_export_as_jpeg">export as JPEG</a></li>
+		<li><a href="#svg" id="menu_export_as_svg">export as SVG</a></li>
 	      </ul>
 	    </li>
 	    <li class="dropdown">
@@ -46,6 +47,14 @@
 	      <ul class="dropdown-menu"><li><a href="#" id="menu_all">all</a></li>
 		<li><a href="#" id="menu_colors">colors</a></li>
 		<li><a href="#" id="menu_materials">materials</a></li>
+	      </ul>
+	    </li>
+	    <li class="dropdown">
+	      <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">rotate <span class="caret"></span></a>
+	      <ul class="dropdown-menu">
+		<li><a href="#" id="menu_x_axis">on X axis</a></li>
+		<li><a href="#" id="menu_y_axis">on Y axis</a></li>
+		<li><a href="#" id="menu_z_axis">on Z axis</a></li>
 	      </ul>
 	    </li>
 	    <li class="dropdown">
