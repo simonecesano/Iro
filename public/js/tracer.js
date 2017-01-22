@@ -7,11 +7,11 @@ importScripts("https://cdn.rawgit.com/jankovicsandras/imagetracerjs/1aeb1b14/ima
 
 
 onmessage = function(e) {
-    console.log(e.data.pixels.length);
-    console.log(e.data.width);
-    console.log(e.data.height);
+    console.log("Got this many pixels: " + e.data.pixels.length);
+    console.log("This is the part number: " + e.data.part);
     var imageData = new ImageData(Uint8ClampedArray.from(e.data.pixels), e.data.width, e.data.height);
     var svgstr = ImageTracer.imagedataToSVG( imageData, { scale: 1 } );
-    postMessage(svgstr);
+    // console.log(svgstr);
+    postMessage({ svg: svgstr, part: e.data.part });
 }
 
