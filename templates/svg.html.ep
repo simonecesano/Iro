@@ -6,17 +6,13 @@
 % unless ($partial) {
     layout 'default'
 % }
-<style>svg { position:absolute }</style>
 <div class="row" id="one_and_three">
-  
   <div id="parts" class="col-md-1 col-md-offset-0">
     <button id="svg" class="btn btn-default" type="submit">svg</button>
   </div>
-  <div id="renderer_1"
-       class="col-md-9 col-md-offset-0 renderer"
-       ></div>
-  <div id="parts" class="col-md-1 col-md-offset-0">
-    <button id="nothing" class="btn btn-default" type="submit">nothing</button>
+  <div id="renderer_1" class="col-md-9 col-md-offset-0 renderer"></div>
+  <div id="progress" class="col-md-1 col-md-offset-0">
+    
   </div>
   <div id="svg_1" class="col-md-9 col-md-offset-0 renderer">&nbsp;</div>
 </div>
@@ -39,6 +35,7 @@
     $(function(){
 	var renderer = iro.renderers[0];
 	var part_ids = [];
+	var scanned_parts = [];
 	var SVGs = [];
 	var SVGoutput;
 	var idx = 0
@@ -46,9 +43,15 @@
 	canvas.width = $(renderer.domElement).width();
 	canvas.height = $(renderer.domElement).height();
 
+	var svg_size = {};
+	
 	var tracer = new Worker("/public/js/tracer.js");
 	tracer.onmessage = function(e) {
-	    var svgstr = e.data
+
+	    var svgstr = e.data.svg;
+	    
+	    scanned_parts.push(e.data.part);
+	    
 	    var svg = $.parseXML( svgstr )
 	    svg = $(svg);
 	    svg.find('path')
@@ -59,48 +62,41 @@
 	    $(svg).attr('viewBox', '0 0 ' + canvas.width + ' ' + canvas.height);
 	    
 	    var xml = svg.get(0);
+	    svg_size.width = xml.documentElement.getAttribute('width');
+	    svg_size.height = xml.documentElement.getAttribute('height');
 
-	    if (SVGoutput) {
-		xml.documentElement.childNodes[0].remove()
+	    var g = xml.createElementNS('http://www.w3.org/2000/svg', 'g');
+	    g.setAttribute('transform', ['rotate(180', svg_size.width / 2, svg_size.height / 2, ')'].join(' '));
 
-		var g = SVGoutput.createElement('g');
-		
-		var node;
-		while (xml.documentElement.hasChildNodes()) {
-		    node = xml.documentElement.childNodes[0];
-		    g.appendChild(node);
-		}
-		SVGoutput.documentElement.appendChild(g);
-
-		var svgstring = (new XMLSerializer()).serializeToString(SVGoutput)
-	    } else {
-		xml.documentElement.childNodes[0].remove()
-		SVGoutput = xml;
-		SVGoutput.documentElement.setAttribute('viewBox',
-						       [
-							   0,
-							   0,
-							   SVGoutput.documentElement.getAttribute('width'),
-							   SVGoutput.documentElement.getAttribute('height')
-						       ].join(' '));
-		
-
-		var g = SVGoutput.createElement('g');
-		var node;
-		while (xml.documentElement.hasChildNodes()) {
-		    node = xml.documentElement.childNodes[0];
-		    g.appendChild(node);
-		}
-		SVGoutput.documentElement.appendChild(g);
-		var svgstring = (new XMLSerializer()).serializeToString(SVGoutput)
+	    var node;
+	    // eliminate rectangle around SVG
+	    xml.documentElement.childNodes[0].remove()
+	    // group nodes
+	    while (xml.documentElement.hasChildNodes()) {
+		node = xml.documentElement.childNodes[0];
+		g.appendChild(node);
 	    }
+	    
+	    if (SVGoutput) {
+		SVGoutput.documentElement.appendChild(g);
+	    } else {
+		xml.documentElement.setAttribute('viewBox', [ 0, 0, svg_size.width, svg_size.height].join(' '));
+		xml.documentElement.setAttribute('height', '100%');
+		xml.documentElement.setAttribute('width', '100%');
+		
+		SVGoutput = xml;
+		SVGoutput.documentElement.appendChild(g);
+	    }
+	    var svgstring = (new XMLSerializer()).serializeToString(SVGoutput)
+	    $('#parts').html(Math.round(scanned_parts.length / part_ids.length * 100) + "%");
 	    $('#svg_1').html(svgstring)
-	    console.log(svgstring)
 	}
 	
 	
-	$('#svg').click(function(){
+	// $('#svg').click(function(){
+	setTimeout(function(){
 	    console.log('on svg');
+	    $('#renderer_1').hide();
 	    var white = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
 	    var black = new THREE.MeshBasicMaterial({ color: 0x000000 });
 
@@ -118,8 +114,9 @@
 		    var gl = renderer.domElement.getContext("webgl");
 		    tracer.postMessage({
 			pixels: getPixels(gl),
-			width: gl.drawingBufferWidth, 
-			height: gl.drawingBufferHeight
+			width:  gl.drawingBufferWidth, 
+			height: gl.drawingBufferHeight,
+			part:   e
 		    });
 		    pixels.push(1)
 		    child.material = white;
@@ -127,6 +124,6 @@
 	    }
 	    console.log('#1 pixels.length ' + pixels.length);
 	    console.log('#2 SVGs.length ' + SVGs.length);
-	})
+	}, 500)
     })
 </script>
