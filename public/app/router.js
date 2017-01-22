@@ -4,7 +4,10 @@ var delta = clock.getDelta(); // seconds.
 var iroPage = new IroPage();
 
 var colors = ['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#b15928'];
-$.get('/c/nbs-iscc-tc', function(d){ colors = d.slice(0, 48) } );
+$.get('/c/nbs-iscc-tc', function(d){
+    // colors = d.slice(0, 48)
+    colors = d
+} );
 
 var iro = new Iro();
 iro.interval = 0.1;
@@ -28,7 +31,8 @@ var IroRouter = Backbone.Router.extend({
 	'three'  : 'viewThree',
 	'four'  : 'viewFour',
 	'drop'  : 'viewDrop',
-	'parts' : 'viewParts'
+	'parts' : 'viewParts',
+	'svg'   : 'viewSVG'
     },
     viewSingle : function(){
 	var heights = ['100%'];
@@ -50,6 +54,7 @@ var IroRouter = Backbone.Router.extend({
 		]
 	    })
 	    iro.initEvents();
+	    // iro.animate();
 	})
     },
     viewThree : function(){
@@ -73,6 +78,7 @@ var IroRouter = Backbone.Router.extend({
 		]
 	    })
 	    iro.initEvents();
+	    // iro.animate();
 	})
     },
     viewFour : function(){
@@ -97,6 +103,7 @@ var IroRouter = Backbone.Router.extend({
 		]
 	    })
 	    iro.initEvents();
+	    // iro.animate();
 	})
     },
     viewDrop : function(){
@@ -107,8 +114,8 @@ var IroRouter = Backbone.Router.extend({
 	    $('#main').html(d)
 	})
     },
-    viewParts : function(){
-	$.get('/i/c/parts.html', function(d){
+    viewSVG : function(){
+	$.get('/i/c/svg.html', function(d){
 	    $('#main').html(d)
 	    iroPage.init({ heights: [ '100%' ]});
 	    iro.init({
