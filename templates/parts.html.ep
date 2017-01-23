@@ -1,0 +1,65 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/keypress/2.1.4/keypress.min.js"></script>
+<script src="https://cdn.rawgit.com/jankovicsandras/imagetracerjs/1aeb1b14/imagetracer_v1.1.2.js"></script>
+<script src="/public/js/hamsters.js"></script>
+<style> .part img { border: thin solid grey }</style>
+
+% unless ($partial) {
+    layout 'default'
+% }
+<div class="row" id="one_and_three">
+  <div id="renderer_1" class="col-md-9 col-md-offset-0 renderer"></div>
+  <div id="parts" class="col-md-12 col-md-offset-0 renderer"></div>
+</div>
+% unless ($partial) {
+<script>
+  var heights = ['100%'];
+  var zooms   = [1.5];
+</script>
+<script src="/public/app/obj_multiple.js"></script>
+<script src="/public/app/obj_clicker.js"></script>
+% }
+<script>
+    var getImage = function(gl){
+	var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+	gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        var imageData = new ImageData(Uint8ClampedArray.from(e.data.pixels), e.data.width, e.data.height);
+	return imageData;
+    };
+
+
+$(function(){
+    var renderer = iro.renderers[0];
+    var part_ids = []
+    setTimeout(function(){
+	console.log('on svg');
+	$('#renderer_1').hide();
+	var white = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+	var black = new THREE.MeshBasicMaterial({ color: 0x000000 });
+	
+	iro.obj.traverse( function ( child ) {
+	    if ( child instanceof THREE.Mesh) { part_ids.push(child.id); child.material = white }
+	})
+	var pixels = [];
+	console.log(part_ids.length);
+	
+	if (part_ids.length) {
+	    _.each(part_ids, function(e, i){
+		console.log(e);
+		var child = iro.scene.getObjectById(e);
+		child.material = black;
+		iro.render();
+		// var gl = renderer.domElement.getContext("webgl");
+		renderer.domElement.toDataURL();
+		// console.log(renderer.domElement.toDataURL());
+		var imgNode = document.createElement("img");
+		imgNode.src = renderer.domElement.toDataURL();
+		var div = $('<div class="col-md-4 part"></div>')
+		div.append(imgNode)
+		div.find('img').width('96%').css('margin', '2%');
+		$('#parts').append(div);
+		child.material = white;
+	    })
+	}
+    }, 500)
+})
+</script>
