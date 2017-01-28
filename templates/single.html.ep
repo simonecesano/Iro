@@ -1,6 +1,4 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.3/fabric.js"></script>
 <script src="https://cdn.rawgit.com/riccardoscalco/textures/master/textures.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.4.1/snap.svg.js"></script>
 % unless ($partial) {
   layout 'default'
 % }
