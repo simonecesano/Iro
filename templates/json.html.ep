@@ -1,0 +1,21 @@
+<script src="https://cdn.rawgit.com/jankovicsandras/imagetracerjs/1aeb1b14/imagetracer_v1.1.2.js"></script>
+<style> .part img { border: thin solid grey }</style>
+
+% unless ($partial) {
+    layout 'default'
+% }
+<div class="row" id="one_and_three">
+  <div id="renderer_1" class="col-md-9 col-md-offset-0 renderer"></div>
+  <div id="parts" class="col-md-12 col-md-offset-0 renderer"></div>
+</div>
+<script>
+$(function(){
+    setTimeout(function(){
+	var renderer = iro.renderers[0];
+	var json = JSON.stringify(iro.obj.toJSON());
+	var blob = new Blob([json], {type: "application/json"});
+	saveAs(blob, "object.json");
+
+    }, 1000);
+})
+</script>
