@@ -2,9 +2,12 @@
       <div class="container">
 	<div class="navbar-collapse collapse" id="navbar">
 	  <ul class="nav navbar-nav"><li class="dropdown">
-	      <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">file <span class="caret"></span></a>
-	      <ul class="dropdown-menu"><li><a href="#drop" id="menu_load">load...</a></li>
-		<li><a href="#" id="menu_export_as_JSON">export as JSON</a></li>
+	      <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle"
+		 data-toggle="dropdown" href="#" role="button">file <span class="caret"></span></a>
+	      <ul class="dropdown-menu">
+		<li><a href="#drop" id="menu_load">load model...</a></li>
+		<li><a href="#palette" id="menu_load">load palette...</a></li>
+		<li><a href="#json" id="menu_export_as_JSON">export as JSON</a></li>
 		<li><a href="#" id="menu_export_as_OBJ">export as OBJ</a></li>
 		<li><a href="#" id="menu_export_as_jpeg">export as JPEG</a></li>
 		<li><a href="#svg" id="menu_export_as_svg">export as SVG</a></li>
@@ -51,10 +54,10 @@
 	    </li>
 	    <li class="dropdown">
 	      <a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle" data-toggle="dropdown" href="#" role="button">rotate <span class="caret"></span></a>
-	      <ul class="dropdown-menu">
-		<li><a href="#" id="menu_x_axis">on X axis</a></li>
-		<li><a href="#" id="menu_y_axis">on Y axis</a></li>
-		<li><a href="#" id="menu_z_axis">on Z axis</a></li>
+	      <ul id="menu_rotate" class="dropdown-menu">
+		<li><a href="#" data-rotation="x" id="menu_x_axis">on X axis</a></li>
+		<li><a href="#" data-rotation="y" id="menu_y_axis">on Y axis</a></li>
+		<li><a href="#" data-rotation="z" id="menu_z_axis">on Z axis</a></li>
 	      </ul>
 	    </li>
 	    <li class="dropdown">
