@@ -27,12 +27,14 @@ var offsets = {
 
 var IroRouter = Backbone.Router.extend({
     routes: {
-	'single' : 'viewSingle',
-	'three'  : 'viewThree',
-	'four'  : 'viewFour',
-	'drop'  : 'viewDrop',
-	'parts' : 'viewParts',
-	'svg'   : 'viewSVG'
+	'single'     : 'viewSingle',
+	'three'      : 'viewThree',
+	'four'       : 'viewFour',
+	'drop'       : 'viewDrop',
+	'parts'      : 'viewParts',
+	'svg'        : 'viewSVG',
+	'json'       : 'viewJSON',
+	'textures'   : 'viewTextures'
     },
     viewSingle : function(){
 	var heights = ['100%'];
@@ -108,9 +110,13 @@ var IroRouter = Backbone.Router.extend({
     },
     viewDrop : function(){
 	var heights = ['100%'];
-
 	$.get('/i/c/drop.html', function(d){
-	    console.log(d);
+	    $('#main').html(d)
+	})
+    },
+    viewJSON : function(){
+	var heights = ['100%'];
+	$.get('/i/c/json.html', function(d){
 	    $('#main').html(d)
 	})
     },
@@ -151,6 +157,11 @@ var IroRouter = Backbone.Router.extend({
 	    })
 	    iro.initEvents();
 	})
+    },
+    viewTextures : function(){
+	$.get('/i/c/textures.html', function(d){
+	    $('#main').html(d)
+	})
     }
 })
 
@@ -162,9 +173,9 @@ window.addEventListener( 'resize', iro.onWindowResize, false );
 
 iro.animate();
 
-// function animate() {
-//     setTimeout( function() {
-//         requestAnimationFrame( iro.animate() );
-//     }, 1000 * iro.interval );
-//     iro.render();
-// }
+function animate() {
+    setTimeout( function() {
+        requestAnimationFrame( iro.animate() );
+    }, 1000 * iro.interval );
+    iro.render();
+}
