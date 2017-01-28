@@ -106,7 +106,7 @@ Iro = function(){
 	var cameras = this.cameras;
 	var renderers = this.renderers;
 	
-	this.obj.rotation.y = 90 * Math.PI / 180;
+	// this.obj.rotation.y = 90 * Math.PI / 180;
 
 	var box = new THREE.Box3().setFromObject( iro.obj );
 	var look_at = box.getCenter();
