@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+  <head>
+    <title></title>
+    <script src="/public/js/underscore-min.js"></script>
+    
+    <script src="/public/js/jquery-3.1.1.min.js"></script>
+    <script src="/public/js/tether.min.js"></script>
+
+    <script src="/public/bootstrap/js/bootstrap.min.js"></script>
+    <link href="/public/bootstrap/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
+    <link  href="/public/bootstrap/css/submenu.css" media="screen" rel="stylesheet" type="text/css">
+    
+    <script src="/public/three/js/three.min.js"></script>
+    <script src="/public/three/js/OBJLoader.js"></script>
+    <script src="/public/three/js/FBXLoader.js"></script>
+    <script src="/public/three/js/Projector.js"></script>
+    <script src="/public/three/js/SVGRenderer.js"></script>
+    <script src="/public/three/js/CanvasRenderer.js"></script>
+    
+
+    <script src="/public/app/iro.js"></script>
+    <script src="/public/app/iro.obj.js"></script>
+    <script src="/public/app/iro.renderer.js"></script>
+    
+    
+    <style>
+      td.x, td.y, td.z { text-align: right; width: 5em }
+      body {
+         min-height: 2000px;
+         padding-top: 70px;
+      }
+
+    </style>
+  </head>
+  <body>
+    %= include 'layouts/menu'
+    <div class="container-fluid">
+      <div class="col-md-9 col-md-offset-1" >
+	<div id="dropzone" class="dropzone jumbotron" style="width:100%;height:80vh;">
+	  drop your OBJ file here
+	</div>
+	<div id="renderer" class="renderer" style="width:100%;height:80vh;">
+	</div>
+      </div>
+    </div>
+  </body>
+  <script>
+    var i = new Iro;
+
+var lights = [
+    { offset: { x: 0, y: 0, z: 70 },    shadowDarkness: 0, color: 0x777777 },
+    { offset: { x: -70, y:  0, z:  0 }, shadowDarkness: 0, color: 0x777777 },
+    { offset: { x:   0, y: 70, z:  0 }, shadowDarkness: 0, color: 0x777777 },
+    { offset: { x: -50, y: 40, z: 70 }, shadowDarkness: 0, color: 0x777777 }
+];
+
+
+$(function(){
+    $('#renderer').hide();
+
+    var r = new Iro.renderer($('#renderer'));
+    
+    r.init();
+    r.addLights(lights);
+    r.addCamera({ x: 0, y: 0, z: 70 });
+    r.offsets = { x: 0, y: 70, z: 0 };
+    r.showAxes();
+    r.animate();
+    
+    var o = new Iro.object;
+
+    var dropzone = document.getElementById('dropzone');
+    
+    // Optional.   Show the copy icon when dragging over.  Seems to only work for chrome.
+    dropzone.addEventListener('dragover', function(e) {
+	e.stopPropagation();
+	e.preventDefault();
+	e.dataTransfer.dropEffect = 'copy';
+    });
+    
+    dropzone.addEventListener('drop', function(e) {
+	e.stopPropagation();
+	e.preventDefault();
+	console.log('drop');
+	file = e.dataTransfer.files[0]; // Array of all files
+	var reader = new FileReader();
+        reader.onload = function(e2) { // finished reading file data.
+            src = e2.target.result;
+	    console.log(src.length);
+	    o.setObject(src)
+	    console.log(o);
+	    r.addObject(o)
+	    $('#renderer').show();
+	    $('#dropzone').hide();
+	    r.render();
+	    r.fitObject();
+        }
+        reader.readAsText(file);
+    });
+})
+
+</script>
+    
+</html>
