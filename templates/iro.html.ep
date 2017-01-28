@@ -70,33 +70,33 @@ $(function(){
     
     var o = new Iro.object;
 
-    var dropzone = document.getElementById('dropzone');
-    
-    // Optional.   Show the copy icon when dragging over.  Seems to only work for chrome.
-    dropzone.addEventListener('dragover', function(e) {
-	e.stopPropagation();
-	e.preventDefault();
-	e.dataTransfer.dropEffect = 'copy';
-    });
-    
-    dropzone.addEventListener('drop', function(e) {
-	e.stopPropagation();
-	e.preventDefault();
-	console.log('drop');
-	file = e.dataTransfer.files[0]; // Array of all files
-	var reader = new FileReader();
-        reader.onload = function(e2) { // finished reading file data.
-            src = e2.target.result;
-	    console.log(src.length);
-	    o.setObject(src)
-	    console.log(o);
-	    r.addObject(o)
-	    $('#renderer').show();
-	    $('#dropzone').hide();
-	    r.render();
-	    r.fitObject();
-        }
-        reader.readAsText(file);
+    $('.dropzone').each(function(){
+
+	$(this).get(0).addEventListener('dragover', function(e) {
+    	    e.stopPropagation();
+    	    e.preventDefault();
+    	    e.dataTransfer.dropEffect = 'copy';
+	});
+
+	$(this).get(0).addEventListener('drop', function(e) {
+	    e.stopPropagation();
+	    e.preventDefault();
+	    console.log('drop');
+	    file = e.dataTransfer.files[0]; // Array of all files
+	    var reader = new FileReader();
+            reader.onload = function(e2) { // finished reading file data.
+		src = e2.target.result;
+		console.log(src.length);
+		o.setObject(src)
+		console.log(o);
+		r.addObject(o)
+		$(e.target).siblings('.renderer').show();
+		$(e.target).hide();
+		r.render();
+		r.fitObject();
+            }
+            reader.readAsText(file);
+	})
     });
 })
 
