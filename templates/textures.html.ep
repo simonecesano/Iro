@@ -1,0 +1,58 @@
+% unless ($partial) {
+% layout 'default'
+% }
+<div class="row" id="one_and_three">
+  <div class="col-md-12 col-md-offset-0">
+    % for my $i (1..128) {
+    <div class="col-md-1">
+      <svg width="120" height="120" viewBox="0 0 80 80"
+	   xmlns="http://www.w3.org/2000/svg">
+	<rect x="10" y="10" width="60" height="40" class="texture"/>
+      </svg>
+    </div>
+    % }
+  </div>
+</div>
+% unless ($partial) {
+<script>
+  var heights = ['100%'];
+  var zooms   = [1.5];
+</script>
+<script src="/public/app/obj_multiple.js"></script>
+<script src="/public/app/obj_clicker.js"></script>
+% }
+<script>
+    $(function(){
+	$('.texture').height($('.texture').width())
+
+	var ts = [
+	    eval ('textures.lines().orientation("3/8", "7/8").thicker()'),
+	    eval ('textures.lines().orientation("3/8")'),
+	    textures.lines().size(8).strokeWidth(2),
+	    textures.lines().size(4).strokeWidth(1),
+	    textures.paths().d("crosses").lighter().thicker(),
+	    textures.paths().d("squares"),
+	    textures.paths().d("caps").lighter().thicker(),
+	    textures.paths().d("hexagons").size(8).strokeWidth(2),
+	    textures.paths().d("nylon"),
+	    textures.paths().d("woven").lighter().thicker(),
+	    textures.paths().d("waves").thicker()
+	];
+	
+	var colorbrewer = d3.schemeSet1;
+	
+	var svg = d3.select("body")
+	    .selectAll("svg")
+	    .data(_.range(0, $('.texture').length))
+	    .each(function(d){ d3.select(this).call(
+		function(selection, tex_nr, col_nr){
+		    var i = tex_nr % ts.length;
+		    if (i == 0) { colorbrewer.push(colorbrewer.shift()) }
+		    c = colorbrewer[0];
+		    var t = ts[i].stroke(c);
+		    console.log(c, i, tex_nr, t.url());
+		    selection.call(t).selectAll(".texture").style("fill", t.url());
+		},
+		d, d) })
+    })
+</script>
