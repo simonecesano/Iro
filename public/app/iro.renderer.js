@@ -76,14 +76,14 @@ Iro.scene.prototype.render = function(){
 
     if ( canvas.width !== width || canvas.height != height ) { renderer.setSize( width, height, false ) }
 
-    renderer.setClearColor( 0xffffff ); renderer.setScissorTest( false ); renderer.clear();
-    renderer.setClearColor( 0xe0e0e0 ); renderer.setScissorTest( true );
+    // renderer.setClearColor( 0xffffff ); renderer.setScissorTest( false ); renderer.clear();
+    // renderer.setClearColor( 0xe0e0e0 ); renderer.setScissorTest( true );
     
     var element = this.element.get(0);
     // get its position relative to the page's viewport
 
     var rect = element.getBoundingClientRect();
-    
+    console.log(rect);
     if ( rect.bottom < 0 || rect.top  > renderer.domElement.clientHeight ||
 	 rect.right  < 0 || rect.left > renderer.domElement.clientWidth ) {
 	return;  // it's off screen

@@ -65,18 +65,39 @@ var lights = [
     { offset: { x: -50, y: 40, z: 70 }, shadowDarkness: 0, color: 0x777777 }
 ];
 
+var scenes = [];
+var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio( window.devicePixelRatio );
+
+function animate() {
+    render();
+    requestAnimationFrame( animate );
+}
+
+function render(){
+    console.log(scenes.length)
+
+    renderer.setClearColor( 0xffffff );
+    renderer.setScissorTest( false );
+    renderer.clear();
+    renderer.setClearColor( 0xe0e0e0 );
+    renderer.setScissorTest( true );    
+
+    scenes.forEach( function( scene ) {
+	scene.render();
+    });
+}
 
 $(function(){
     $('.renderer').hide();
     var e = $('#c');
-
-    var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
-    renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( $(e).width(), $(e).height() );
+    
     e.empty();
     e.append( renderer.domElement );
+
     console.log(renderer);
-    
+    animate();
 
     $('.dropzone').each(function(i, e){
 	console.log(i);
@@ -116,6 +137,7 @@ $(function(){
 		r.render();
 		r.fitObject();
 		r.render();
+		scenes.push(r)
             }
             reader.readAsText(file);
 	})
