@@ -17,11 +17,14 @@ Iro.renderer = function(frame) {
 }
 
 Iro.renderer.prototype.init = function(){
+    this.frame = $('#c');
     var e = this.frame;
+
     console.log( $(e).width(), $(e).height() );
     this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
     this.renderer.setPixelRatio( window.devicePixelRatio );
     this.renderer.setSize( $(e).width(), $(e).height() );
+    e.empty();
     e.append( this.renderer.domElement );
 }
     
