@@ -28,7 +28,7 @@
       td.x, td.y, td.z { text-align: right; width: 5em }
       body {
          min-height: 2000px;
-         padding-top: 70px;
+         padding-top: 0px;
       }
       #c {
 	  position: fixed;
@@ -37,14 +37,15 @@
 	  height: 100%;
 	  border: solid thin red;
       }
+      .renderer {  border: solid thin grey }
     </style>
   </head>
   <body>
     <div id="c"></div>
     %= include 'layouts/menu'
-    <div class="container-fluid" style="z-index: 1;">
+    <div class="container-fluid" style="padding-top: 70px; z-index: 1;">
     % for (0..0) {
-      <div class="col-md-12 col-md-offset-0" >
+      <div class="col-md-6 col-md-offset-0" >
 	<div class="dropzone jumbotron" style="width:100%;height:80vh;">
 	  drop your OBJ file here
 	</div>

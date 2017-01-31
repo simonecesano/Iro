@@ -1,5 +1,6 @@
-Iro.renderer = function(frame) {
-    this.frame = frame;
+Iro.renderer = function(element) {
+    this.element = element
+    this.frame = undefined;
     
     this.obj = undefined;
     
@@ -67,15 +68,64 @@ Iro.renderer.prototype.addLights = function(lights){
 Iro.renderer.prototype.render = function(){
     var renderer = this.renderer;
     var offsets = this.offsets;
+
+    var canvas = renderer.domElement;
+
+    var width = canvas.clientWidth;
+    var height = canvas.clientHeight;
+
+    if ( canvas.width !== width || canvas.height != height ) {
+	renderer.setSize( width, height, false );
+    }
+
+    
+    renderer.setClearColor( 0xffffff );
+    renderer.setScissorTest( false );
+    renderer.clear();
+    renderer.setClearColor( 0xe0e0e0 );
+    renderer.setScissorTest( true );
+    
+    var element = this.element.get(0);
+    // get its position relative to the page's viewport
+
+    var rect = element.getBoundingClientRect();
+
+    console.log('rect');
+    console.log(rect);
+
+    console.log('canvas');
+    console.log(canvas.getBoundingClientRect());
+    
+    if ( rect.bottom < 0 || rect.top  > renderer.domElement.clientHeight ||
+	 rect.right  < 0 || rect.left > renderer.domElement.clientWidth ) {
+	return;  // it's off screen
+    }
+    
+    var width  = rect.right - rect.left;
+    var height = rect.bottom - rect.top;
+    var left   = rect.left;
+    var bottom = renderer.domElement.clientHeight - rect.bottom;
+    
+    // console.log(this.element);
     
     var box = new THREE.Box3().setFromObject( this.obj );
     var look_at = box.getCenter();
-    
+    // console.log(look_at);
+    // look_at = {x: 0, y: 0, z: 0}
     var camera = this.camera;
     _.chain(['x', 'y', 'z']).each(function(e, k){
 	camera.position[e] = box.getCenter()[e] + offsets[e];
     })
     camera.lookAt( look_at );
+
+    // this fixes proprtions
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+
+    // this is still weird
+    renderer.setViewport( left, bottom, width, height );
+    renderer.setScissor( left, bottom, width, height );
+    
     this.renderer.render( this.scene, camera );
 }
 
