@@ -68,15 +68,14 @@ var lights = [
 
 $(function(){
     $('.renderer').hide();
+    var e = $('#c');
 
-    var r = new Iro.renderer($('#renderer'));
-    
-    r.init();
-    r.addLights(lights);
-    r.addCamera({ x: 0, y: 0, z: 70 });
-    r.offsets = { x: 0, y: 70, z: 0 };
-    r.showAxes();
-    r.animate();
+    var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( $(e).width(), $(e).height() );
+    e.empty();
+    e.append( renderer.domElement );
+    console.log(renderer);
     
     var o = new Iro.object;
 
@@ -84,7 +83,7 @@ $(function(){
 	console.log(i);
 	console.log(e);
 
-	var r = new Iro.renderer($(e).siblings('.renderer').first());
+	var r = new Iro.scene($(e).siblings('.renderer').first(), renderer);
 	
 	r.init();
 	r.addLights(lights);
