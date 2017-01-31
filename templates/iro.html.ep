@@ -21,7 +21,9 @@
 
     <script src="/public/app/iro.js"></script>
     <script src="/public/app/iro.obj.js"></script>
+    <script src="/public/app/iro.page.js"></script>
     <script src="/public/app/iro.renderer.js"></script>
+    <script src="/public/app/iro.scene.js"></script>
     
     
     <style>
@@ -67,42 +69,15 @@ var lights = [
 
 
 $(function(){
-    var scenes = [];
-    var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
-    renderer.setPixelRatio( window.devicePixelRatio );
-    
-    function animate() {
-	render();
-	requestAnimationFrame( animate );
-    }
-    
-    function render(){
-	renderer.setClearColor( 0xffffff );
-	renderer.setScissorTest( false );
-	renderer.clear();
-	renderer.setClearColor( 0xe0e0e0 );
-	renderer.setScissorTest( true );    
-	
-	scenes.forEach( function( scene ) {
-	    scene.render();
-	});
-    }
-    
-
-    $('.renderer').hide();
-    var e = $('#c');
-    renderer.setSize( $(e).width(), $(e).height() );
-    
-    e.empty();
-    e.append( renderer.domElement );
-
-    animate();
+    $('.renderer').hide()
+    var renderer = new Iro.renderer($('#c'));
+    renderer.animate();
 
     $('.dropzone').each(function(i, e){
 	console.log(i);
 	console.log(e);
 
-	var r = new Iro.scene($(e).siblings('.renderer').first(), renderer);
+	var r = new Iro.scene($(e).siblings('.renderer').first(), renderer.renderer);
 	
 	r.init();
 	r.addLights(lights);
@@ -136,7 +111,7 @@ $(function(){
 		r.render();
 		r.fitObject();
 		r.render();
-		scenes.push(r)
+		renderer.scenes.push(r)
             }
             reader.readAsText(file);
 	})
