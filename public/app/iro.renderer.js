@@ -1,15 +1,19 @@
-Iro.renderer = function(element){
+Iro.renderer = function(element, renderer){
     var e = $(element);
 
-    this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
-    this.renderer.setPixelRatio( window.devicePixelRatio );
+    if (renderer) {
+	this.renderer = renderer;
+    } else {
+	this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
+	this.renderer.setPixelRatio( window.devicePixelRatio );
+    }
 
     this.renderer.setSize( $(e).width(), $(e).height() );
     
     e.empty();
     e.append( this.renderer.domElement );
 
-    this.interval = 0.1;
+    this.interval = 0.01;
     this.scenes = [];
 
     return this;
@@ -30,7 +34,6 @@ Iro.renderer.prototype.render = function() {
     scenes.forEach( function( scene ) {
 	scene.render();
     });
-
 }
 
 Iro.renderer.prototype.animate = function() {

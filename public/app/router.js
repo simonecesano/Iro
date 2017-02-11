@@ -13,7 +13,10 @@ var iro = new Iro();
 iro.interval = 0.1;
 
 var file = '/public/obj/Superstar.obj';
-$.get(file, function(d){ iro.addObject(d) } );
+$.get(file, function(d){
+    console.log(d.length);
+    iro.addObject(d)
+} );
 
 var offsets = {
     side:    { x: 0, y: 0, z: 70 },
@@ -56,7 +59,7 @@ var IroRouter = Backbone.Router.extend({
 		]
 	    })
 	    iro.initEvents();
-	    // iro.animate();
+	    iro.animate();
 	})
     },
     viewThree : function(){
@@ -80,7 +83,7 @@ var IroRouter = Backbone.Router.extend({
 		]
 	    })
 	    iro.initEvents();
-	    // iro.animate();
+	    iro.animate();
 	})
     },
     viewFour : function(){
@@ -105,7 +108,7 @@ var IroRouter = Backbone.Router.extend({
 		]
 	    })
 	    iro.initEvents();
-	    // iro.animate();
+	    iro.animate();
 	})
     },
     viewDrop : function(){
@@ -173,9 +176,9 @@ window.addEventListener( 'resize', iro.onWindowResize, false );
 
 iro.animate();
 
-function animate() {
-    setTimeout( function() {
-        requestAnimationFrame( iro.animate() );
-    }, 1000 * iro.interval );
-    iro.render();
-}
+// function animate() {
+//     setTimeout( function() {
+//         requestAnimationFrame( iro.animate() );
+//     }, 1000 * iro.interval );
+//     iro.render();
+// }

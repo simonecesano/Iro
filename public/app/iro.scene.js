@@ -64,6 +64,18 @@ Iro.scene.prototype.addLights = function(lights){
     })
 }
 
+Iro.scene.prototype.updateBoundingClientRect = function(){
+    var element = this.element.get(0);
+    var rect = element.getBoundingClientRect();
+
+    this.width  = rect.right - rect.left;
+    this.height = rect.bottom - rect.top;
+
+    this.left   = this.x = rect.left;
+    this.bottom = this.y = this.renderer.domElement.clientHeight - rect.bottom;
+
+    this.aspect = this.width / this.height
+}
 
 Iro.scene.prototype.render = function(){
     var renderer = this.renderer;
@@ -76,26 +88,8 @@ Iro.scene.prototype.render = function(){
 
     if ( canvas.width !== width || canvas.height != height ) { renderer.setSize( width, height, false ) }
 
-    // renderer.setClearColor( 0xffffff ); renderer.setScissorTest( false ); renderer.clear();
-    // renderer.setClearColor( 0xe0e0e0 ); renderer.setScissorTest( true );
-    
-    var element = this.element.get(0);
-    // get its position relative to the page's viewport
+    this.updateBoundingClientRect();
 
-    var rect = element.getBoundingClientRect();
-    // console.log(rect);
-    if ( rect.bottom < 0 || rect.top  > renderer.domElement.clientHeight ||
-	 rect.right  < 0 || rect.left > renderer.domElement.clientWidth ) {
-	return;  // it's off screen
-    }
-    
-    var width  = rect.right - rect.left;
-    var height = rect.bottom - rect.top;
-    var left   = rect.left;
-    var bottom = renderer.domElement.clientHeight - rect.bottom;
-    
-    // console.log(this.element);
-    
     var box = new THREE.Box3().setFromObject( this.obj );
     var look_at = box.getCenter();
 
@@ -103,14 +97,15 @@ Iro.scene.prototype.render = function(){
     _.chain(['x', 'y', 'z']).each(function(e, k){
 	camera.position[e] = box.getCenter()[e] + offsets[e];
     })
+
     camera.lookAt( look_at );
-    camera.aspect = width / height;
+    camera.aspect = this.aspect;
     camera.updateProjectionMatrix();
 
-    renderer.setViewport( left, bottom, width, height );
-    renderer.setScissor( left, bottom, width, height );
+    renderer.setViewport( this.left, this.bottom, this.width, this.height );
+    renderer.setScissor( this.left, this.bottom, this.width, this.height );
     
-    this.renderer.render( this.scene, camera );
+    renderer.render( this.scene, camera );
 }
 
 Iro.scene.prototype.animate = function() {

@@ -1,8 +1,8 @@
-<style> .part img { border: thin solid grey }</style>
+<style>
+.part img { border: thin solid grey }
+</style>
 
-% unless ($partial) {
-    layout 'default'
-% }
+% unless ($partial) { layout 'default'; }
 <div class="row" id="one_and_three">
   <div id="renderer_1" class="col-md-9 col-md-offset-0 renderer"></div>
   <div id="parts" class="col-md-12 col-md-offset-0 renderer"></div>
@@ -16,19 +16,35 @@
 <script src="/public/app/obj_clicker.js"></script>
 % }
 <script>
-    var getImage = function(gl){
-	var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
-	gl.readPixels(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
-        var imageData = new ImageData(Uint8ClampedArray.from(e.data.pixels), e.data.width, e.data.height);
-	return imageData;
-    };
-
-
 $(function(){
     var renderer = iro.renderers[0];
+
+    console.log(new Date());
+
     var part_ids = []
+    var canvases = [];
     setTimeout(function(){
-	console.log('on svg');
+	// ------------------------------
+	// get shadow and texture image
+	// ------------------------------
+	var canvas = document.createElement("canvas");
+	
+	var div = $('<div class="col-md-12 part"></div>')
+	div.append(canvas)
+	
+	var gl = renderer.domElement.getContext("webgl")
+	canvas.width  = gl.drawingBufferWidth; canvas.height = gl.drawingBufferHeight;
+	
+	var ctx = canvas.getContext('2d');
+	ctx.drawImage(gl.canvas, 0, 0, canvas.width, canvas.height);
+	div.find('canvas').width('100%').css('margin', '0%');
+	$('#parts').append(div);
+	canvases.push(canvas)
+
+	// --------------------
+	// make parts white
+	// --------------------
+	
 	$('#renderer_1').hide();
 	var white = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
 	var black = new THREE.MeshBasicMaterial({ color: 0x000000 });
@@ -37,26 +53,96 @@ $(function(){
 	    if ( child instanceof THREE.Mesh) { part_ids.push(child.id); child.material = white }
 	})
 	var pixels = [];
+
+	// console.log('part_ids.length');
 	console.log(part_ids.length);
+
+	
 	
 	if (part_ids.length) {
 	    _.each(part_ids, function(e, i){
-		console.log(e);
+		// console.log(e);
 		var child = iro.scene.getObjectById(e);
-		child.material = black;
+
+		child.material = black.clone();
+
+		// var r = i / 128; var g = b = r;
+		child.material.color.setRGB(Math.random(), Math.random(), Math.random());
+
 		iro.render();
-		// var gl = renderer.domElement.getContext("webgl");
-		renderer.domElement.toDataURL();
-		// console.log(renderer.domElement.toDataURL());
-		var imgNode = document.createElement("img");
-		imgNode.src = renderer.domElement.toDataURL();
-		var div = $('<div class="col-md-4 part"></div>')
-		div.append(imgNode)
-		div.find('img').width('96%').css('margin', '2%');
+
+		var canvas = document.createElement("canvas");
+
+		var div = $('<div class="col-md-12 part"></div>')
+		div.append(canvas)
+		
+		var gl = renderer.domElement.getContext("webgl")
+		canvas.width  = gl.drawingBufferWidth;
+		canvas.height = gl.drawingBufferHeight;
+		
+		var ctx = canvas.getContext('2d');
+		
+		ctx.drawImage(gl.canvas, 0, 0, canvas.width, canvas.height);
+		var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+		var pixel = imageData.data;
+		var r=0, g=1, b=2, a=3;
+		var c = 0;
+		for (var p = 0; p < pixel.length; p += 4) {
+		    if (pixel[p+r] == 255 && pixel[p+g] == 255 && pixel[p+b] == 255) {
+			pixel[p+a] = 0;
+			c++;
+		    }
+		}
+
+		// console.log(c)
+		// console.log(pixel.length / 4)
+		
+		ctx.putImageData(imageData,0,0);
+		
+		canvases.push(canvas)
+		
+		div.find('canvas').width('100%').css('margin', '0%');
 		$('#parts').append(div);
 		child.material = white;
 	    })
+	    var canvas = document.createElement("canvas");
+	    
+	    canvas.width  = canvases[0].width;
+	    canvas.height = canvases[0].height;
+
+	    var shadows = canvases.shift();
+	    
+	    var ctx = canvas.getContext('2d');
+	    ctx.globalCompositeOperation = 'source-over';
+	    _.each(canvases, function(e, i){
+		ctx.drawImage(e, 0, 0, canvas.width, canvas.height);
+	    })
+	    ctx.globalCompositeOperation = 'luminosity';
+
+	    // -----------------------------------
+	    // freeze image without shadows
+	    // -----------------------------------
+	    var noshadow = canvas.cloneNode(true)
+	    noshadow.getContext('2d').drawImage(canvas, 0, 0, canvas.width, canvas.height)
+	    var div = $('<div class="col-md-12 part"></div>')
+	    div.append(noshadow)
+	    div.find('canvas').width('100%').css('margin', '0%');
+	    $('#parts').append(div);
+	    
+	    
+	    // -----------------------------------
+	    // add shadows
+	    // -----------------------------------
+	    ctx.globalAlpha = 0.5
+	    ctx.globalCompositeOperation = 'multiply';
+	    ctx.drawImage(shadows, 0, 0, canvas.width, canvas.height);
+
+	    var div = $('<div class="col-md-12 part"></div>')
+	    div.append(canvas)
+	    div.find('canvas').width('100%').css('margin', '0%');
+	    $('#parts').append(div);
+	    console.log(new Date());
 	}
-    }, 500)
+    }, 0)
 })
 </script>

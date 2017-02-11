@@ -24,8 +24,12 @@ Iro = function(){
 	this.renderers = _.map(containers, function(e, i){
 	    // var foo = new Iro.renderer();
 	    
-    	    var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
+    	    var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false, preserveDrawingBuffer: true });
+	    renderer.setClearColor( 0x000000, 0 );
+	    renderer.setClearAlpha(0);
+	    
 	    // var renderer = THREE.CanvasRenderer();
+	    console.log('renderer')
 	    console.log(renderer)
 	    // var renderer = new THREE.SVGRenderer();
 	    renderer.setPixelRatio( window.devicePixelRatio );
@@ -79,6 +83,7 @@ Iro = function(){
 	var object = loader.parse(object_string);
 	var count = 0;
 	var material = new THREE.MeshLambertMaterial({ color: 0xCC0000 });
+
 	// var material = new THREE.MeshBasicMaterial({ color: 0xCC0000 });
 	object.traverse( function ( child ) {
 	    if ( child instanceof THREE.Mesh ) {
@@ -105,12 +110,9 @@ Iro = function(){
 	var iro = this;
 	var cameras = this.cameras;
 	var renderers = this.renderers;
-	
-	// this.obj.rotation.y = 90 * Math.PI / 180;
 
 	var box = new THREE.Box3().setFromObject( iro.obj );
 	var look_at = box.getCenter();
-	// console.log('cameras: ' + cameras.length)
 	
 	_.each(renderers, function(e, i){
 	    var camera = cameras[i];
@@ -120,7 +122,7 @@ Iro = function(){
 	    camera.lookAt( look_at );
 	    e.render( iro.scene, camera );
 	    // console.log(e.domElement.toDataURL())
-	    iro.dataURLs[i] = e.domElement.toDataURL();
+	    // iro.dataURLs[i] = e.domElement.toDataURL();
 	})
 
     }
@@ -144,14 +146,18 @@ Iro = function(){
 Iro.prototype.initEvents = function(){
     var renderers = this.renderers;
     var cameras   = this.cameras;
-    var obj       = this.obj;
     var iro       = this;
-    
+
     _.each(renderers, function(e, i) {
 	console.log(e);
+	
 	e.domElement.addEventListener('mousedown', function(event) {
 	    // var bb = this.getBoundingClientRect();
 	    iro.activeRendererNumber = i;
+	    var obj = iro.obj;
+	    
+	    console.log(obj);
+	    console.log('---------- obj ---------------');
 	    
 	    var camera = cameras[i];
 	    var vector = new THREE.Vector3(
@@ -228,6 +234,7 @@ Iro.prototype.animate = function() {
     }
 }
 
+
 IroPage = function(){
     this.containers = [];
     this.init = function(opts){
@@ -244,39 +251,4 @@ IroPage = function(){
 	}
     }
     return this;
-}
-
-IroPage.prototype.addPalette = function(target, palette){
-    var template =
-	Handlebars.compile([ '<style>.swatch {width:1em;height:1em;padding:1px;display:inline-block}</style>',
-			     '<div>{{#each palette}}',
-			     '<div class="swatch" data-rgb="{{ rgb }}" style="background-color:{{ rgb }}">&emsp;</div>',
-			     '{{/each}}</div>' ].join("\n"))
-    var data = {};
-    data.palette = _.map(palette, function(e, i){
-	if (typeof e !== 'object') { e = { rgb: e, name: "" } }
-	return e;
-    })
-    // console.log(data);
-    // console.log(template(data));
-    $(target).html(template(data))
-    $('.swatch').on('click', function(){
-	// console.log(iro.obj);
-	var c = chroma($(this).data('rgb'));
-	// console.log(c.css());
-	var all_ids = [];
-	iro.obj.traverse( function ( child ) {
-	    all_ids.push(child.id)
-	})
-	// console.log(all_ids);
-
-	var ids = iro.selectedIDs();
-	
-	_.each(ids, function(e, i){
-	    // console.log(e);
-	    var o = iro.scene.getObjectById( parseInt(e), false );
-	    // console.log(o);
-	    o.material.color.setStyle(c.css())
-	})
-    })
 }

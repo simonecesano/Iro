@@ -18,10 +18,7 @@
     <script src="/public/three/js/three.min.js"></script>
     
     <script src="/public/three/js/OBJLoader.js"></script>
-    <script src="/public/three/js/FBXLoader.js"></script>
     <script src="/public/three/js/Projector.js"></script>
-    <script src="/public/three/js/SVGRenderer.js"></script>
-    <script src="/public/three/js/CanvasRenderer.js"></script>
     <script src="/public/three/js/TrackballControls.js"></script>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/1.2.1/chroma.min.js"></script>
@@ -38,7 +35,7 @@
       td.x, td.y, td.z { text-align: right; width: 5em }
       body {
          min-height: 2000px;
-         padding-top: 70px;
+	 padding-top: 70px;
       }
 
     </style>
