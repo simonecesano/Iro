@@ -1,0 +1,5 @@
+% unless ($partial) { layout 'default' };
+<div class="row" id="one_and_three">
+  <div id="renderer_1" class="col-md-9 col-md-offset-0 renderer">
+  </div>
+</div>
