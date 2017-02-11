@@ -1,0 +1,6 @@
+% layout 'default';
+<div class="row" id="one_and_three">
+  <div id="svg_1" class="col-md-9 col-md-offset-1 renderer" style="border: thin solid grey">
+    %= include 'part'
+  </div>
+</div>
