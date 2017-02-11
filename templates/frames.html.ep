@@ -1,0 +1,9 @@
+% for (0..($frames - 1)) {
+<div class="col-md-6 col-md-offset-0" >
+  <div class="dropzone jumbotron" style="width:100%;height:80vh;">
+    drop your OBJ file here
+  </div>
+  <div class="renderer" style="width:100%;height:80vh;">
+  </div>
+</div>
+% }
