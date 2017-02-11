@@ -13,7 +13,6 @@ Iro.object = function(){
 // the idea is that materials get assigned to the three.js object for visualization purposes
 // but the real material is stored in this.materials
 
-
 Iro.object.prototype.setObject = function(object_string) {
     // assign object
 
@@ -82,28 +81,3 @@ Iro.object.prototype.idsInGroup = function(){
     // and so on recursively until no group is found
 }
 
-Iro.groups = function(){
-    this.parts = {};
-    this.groups = {};
-}
-
-Iro.groups.prototype.create = function(ids) {
-    var uuid = createUUID();
-    _.each(ids, function(e, i){ this.parts[e] = uuid })
-    this.groups[uuid] = ids;
-    return uuid;
-}
-
-Iro.groups.ungroup = function(id){
-    var uuid = this.parts[id];
-    var ids = this.groups[uuid];
-    _.each(ids, function(e, i){ delete this.parts[e] })
-    delete this.groups[uuid]
-}
-
-Iro.groups.siblings = function(id){
-}
-
-Iro.groups.topGroup = function(id){
-
-}
