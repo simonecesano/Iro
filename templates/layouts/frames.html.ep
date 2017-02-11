@@ -1,0 +1,9 @@
+% for (0..($frames - 1)) {
+<div class="col-md-<%= $width || 12 %> col-md-offset-<%= $offset || 0 %>" >
+  <div class="dropzone jumbotron" style="width:100%;height: <%= $vh || 80 %>vh;">
+    drop your OBJ file here
+  </div>
+  <div class="renderer" style="width:100%;height:<%= $vh || 80 %>vh;">
+  </div>
+</div>
+% }
