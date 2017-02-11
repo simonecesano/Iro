@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+  <head>
+    <title></title>
+    <script src="/public/js/underscore-min.js"></script>
+    
+    <script src="/public/js/jquery-3.1.1.min.js"></script>
+    <script src="/public/js/tether.min.js"></script>
+
+    <script src="/public/bootstrap/js/bootstrap.min.js"></script>
+    <link href="/public/bootstrap/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
+    <link  href="/public/bootstrap/css/submenu.css" media="screen" rel="stylesheet" type="text/css">
+    
+    <script src="/public/three/js/three.min.js"></script>
+    <script src="/public/three/js/OBJLoader.js"></script>
+    <script src="/public/three/js/FBXLoader.js"></script>
+    <script src="/public/three/js/Projector.js"></script>
+    <script src="/public/three/js/SVGRenderer.js"></script>
+    <script src="/public/three/js/CanvasRenderer.js"></script>
+    
+
+    <script src="/public/app/iro.js"></script>
+    <script src="/public/app/iro.obj.js"></script>
+    <script src="/public/app/iro.page.js"></script>
+    <script src="/public/app/iro.renderer.js"></script>
+    <script src="/public/app/iro.scene.js"></script>
+    <script src="/public/app/iro.scene.image.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.6.0/js/md5.js"></script>    
+    
+    <style>
+      td.x, td.y, td.z { text-align: right; width: 5em }
+      body {
+         height: 100vh;
+         padding-top: 0px;
+      }
+      #c {
+	  position: fixed;
+	  left: 0px;
+	  width: 100%;
+	  height: 100%;
+	  border: solid thin red;
+      }
+      #canvas, #canvas2 { border: thin solid gray };
+    </style>
+  </head>
+  <body>
+    <div id="c"></div>
+    %= include 'layouts/menu'
+    <div class="container-fluid" style="padding-top: 70px; z-index: 1;">
+      %= include 'layouts/frames', frames => 1, width => 12, vh => 80, offset => 0;
+      <div class="col-md-12 col-md-offset-0" >
+	<div id="dropzone" class="jumbotron dropzone" style="height:80vh;">
+	  drop your OBJ file here
+	</div>
+	<div id="files" style="width:100%;height:80vh;">
+	</div>
+      </div>
+      <div class="col-md-12 col-md-offset-0" >
+	<canvas id="canvas"></canvas>
+      </div>
+    </div>
+  </body>
+  <script>
+
+$(function(){
+    var root;
+    window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+    window.requestFileSystem(window.TEMPORARY, 16 * 60 * 1024 * 1024 ,
+			     function(fs){
+				 root = fs.root;
+				 console.log('Opened file system: ' + fs.name);
+			     },
+			     function(e){
+				 console.log(e);
+			     });
+    
+    $('.files').hide()
+    $('.dropzone').each(function(i, e){
+	$(this).get(0).addEventListener('dragover', function(e) {
+    	    e.stopPropagation();
+    	    e.preventDefault();
+    	    e.dataTransfer.dropEffect = 'copy';
+	});
+
+	$(this).get(0).addEventListener('drop', function(e) {
+	    e.stopPropagation();
+	    e.preventDefault();
+	    console.log('drop');
+	    console.log(root)
+
+	    var file = e.dataTransfer.files[0]; // Array of all files
+	    var reader = new FileReader();
+
+            reader.onload = function(g) {
+		console.log(g.target);
+		var src = g.target.result;
+		console.log(src.length);
+		var hash = md5(src);
+		console.log(hash);
+		root.getFile(hash + '.obj',
+			     {create: true},
+			     function(file) {
+				 console.log(root.createReader().readEntries(function(entries){
+				     console.log(entries);
+				 }));
+				 
+			     },
+			     function(){
+				 
+			     });
+	    }
+	    reader.readAsText(file);
+	});
+    })
+})
+
+</script>
+    
+</html>
