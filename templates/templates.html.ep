@@ -1,0 +1,6 @@
+% $partial = 0;
+% for my $template (qw/three four single/) {
+<script id="template_<%= $template %>" type="none">
+%= include $template
+</script>
+% }
