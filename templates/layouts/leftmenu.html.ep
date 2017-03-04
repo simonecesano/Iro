@@ -1,0 +1,26 @@
+<style>
+.icon-flipped {
+    transform: scaleX(-1);
+    -moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    -ms-transform: scaleX(-1);
+}
+#leftmenu { position:fixed; top:80px; left:0%; }
+#leftmenu div {
+    font-size: 16; margin: 6px;
+    display: inline-block;
+}
+</style>
+<div id="leftmenu" class="col-md-1 col-md-offset-0">
+  <div id="zoom_in" class="glyphicon glyphicon-zoom-in" aria-hidden="true"></div>
+  <div id="zoom_out" class="glyphicon glyphicon-zoom-out" aria-hidden="true"></div>
+  <div class="glyphicon glyphicon-repeat icon-flipped" aria-hidden="true"></div>
+  <div class="glyphicon glyphicon-repeat" aria-hidden="true"></div>
+
+
+  <div class="glyphicon glyphicon-arrow-left" aria-hidden="true"></div>
+  <div class="glyphicon glyphicon-arrow-right" aria-hidden="true"></div>
+
+  <div class="glyphicon glyphicon-camera" aria-hidden="true"></div>
+</div>
+

@@ -1,15 +1,9 @@
 % unless ($partial) { layout 'default' }
-<div class="row renderers" id="one_and_three">
-  <div id="renderer_1" class="col-md-7 col-md-offset-1"></div>
-  <div id="renderer_2" class="col-md-3 col-md-offset-0"></div>
-  <div id="renderer_3" class="col-md-3 col-md-offset-0"></div>
-  <div id="renderer_4" class="col-md-3 col-md-offset-0"></div>
+%= include 'layouts/palettes'
+%= include 'layouts/leftmenu'
+<div class="row renderers">
+  <div id="renderer_1" class="renderer col-md-6 col-md-offset-1" style="height:80vh;"></div>
+  <div id="renderer_2" class="renderer col-md-3 col-md-offset-0" style="height:26vh;"></div>
+  <div id="renderer_3" class="renderer col-md-3 col-md-offset-0" style="height:26vh;"></div>
+  <div id="renderer_4" class="renderer col-md-3 col-md-offset-0" style="height:26vh;"></div>
 </div>
-% unless ($partial) {
-<script>
-  var heights = ['100%', '33%', '33%', '33%'];
-  var zooms   = [1.2, 1.2, 1.2, 1.2];
-</script>
-<script src="/public/app/obj_multiple.js"></script>
-<script src="/public/app/obj_clicker.js"></script>
-% }

@@ -1,43 +1,48 @@
-<style> #palettes { position:fixed; top:80px; right:2%; } </style>
+<style> #palettes { position:fixed; top:80px; right:0%; } </style>
 <div id="palettes" class="col-md-2 col-md-offset-0">
   <div class="panel panel-default">
+    <!-- ------ parts -------- -->
     <div class="panel-heading" role="tab" id="headingOne">
-      <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          colors
+      <div class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#parts" aria-expanded="true" aria-controls="parts">
+          parts
         </a>
-      </h4>
+      </div>
     </div>
-    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+    <div id="parts" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
       <div class="panel-body">
 	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-	  <div id="colors" ></div>
+	  <div id="parts_panel" ></div>
 	</div>
       </div>
     </div>
+    <!-- ------ colors -------- -->
     <div class="panel-heading" role="tab" id="headingOne">
-      <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseOne">
-          materials
+      <div class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#colors" aria-expanded="true" aria-controls="colors">
+          colors
         </a>
-      </h4>
+      </div>
     </div>
-    <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+    <div id="colors" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
       <div class="panel-body">
 	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-	  <div id="materials">
-	    <button id="material" class="btn btn-default" type="submit">material</button>
-	    <button id="svg" class="btn btn-default" type="submit">svg</button>
-	    <div id="scg">
-	      <svg width="20" height="20"><defs><pattern id="uanrb" patternUnits="userSpaceOnUse" width="20" height="20">
-		    <path d="M 0,20 l 20,-20 M -5,5 l 10,-10
-			     M 15,25 l 10,-10" stroke-width="2" shape-rendering="auto" stroke="#343434"
-			  stroke-linecap="square"></path></pattern></defs>
-		<path d="M 0 0 L 0 140 L 140 140 L 140 0 Z"
-		      style="fill: url(&quot;#uanrb&quot;) none;">
-		</path>
-	      </svg>
-	    </div>
+	  <div id="colors_panel" ></div>
+	</div>
+      </div>
+    </div>
+    <!-- ------ materials -------- -->
+    <div class="panel-heading" role="tab" id="headingOne">
+      <div class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#materials" aria-expanded="true" aria-controls="materials">
+          materials
+        </a>
+      </div>
+    </div>
+    <div id="materials" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+	<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+	  <div id="materials_panel">
 	  </div>
 	</div>
       </div>

@@ -1,169 +1,170 @@
 var clock = new THREE.Clock();
 var delta = clock.getDelta(); // seconds.
 
-var iroPage = new IroPage();
-
-var colors = ['#a6cee3','#1f78b4','#b2df8a','#33a02c','#fb9a99','#e31a1c','#fdbf6f','#ff7f00','#cab2d6','#6a3d9a','#ffff99','#b15928'];
-$.get('/c/nbs-iscc-tc', function(d){
-    // colors = d.slice(0, 48)
-    colors = d
-} );
-
 var iro = new Iro();
 iro.interval = 0.1;
 
-var file = '/public/obj/Superstar.obj';
-$.get(file, function(d){
-    console.log(d.length);
-    iro.addObject(d)
-} );
+Iro.app = Backbone.Model.extend({
+    initialize: function(){ console.log("Welcome to this world") }
+});
 
-var offsets = {
-    side:    { x: 0, y: 0, z: 70 },
-    top:     { x:   0, y: 70, z:  0 },
-    medial:  { x: 0, y: 0, z: -70 },
-    toe:     { x: -70, y:  0, z:  0 },
-    heel:    { x: 70, y:  0, z:  0 },
-    threeq: { x: -50, y: 40, z: 70 },
-    bottom: { x: 0, y: -70, z: 0 },
-};
+var page = new Iro.page();
+
+var obj  = new Iro.object();
+
+var file = '/public/obj/Superstar.obj';
+
+var app = new Iro.app({page: page, obj: obj })
+
 
 var IroRouter = Backbone.Router.extend({
     routes: {
-	'single'     : 'viewSingle',
-	'three'      : 'viewThree',
-	'four'       : 'viewFour',
 	'drop'       : 'viewDrop',
-	'parts'      : 'viewParts',
-	'svg'        : 'viewSVG',
-	'json'       : 'viewJSON',
-	'textures'   : 'viewTextures'
-    },
-    viewSingle : function(){
-	var heights = ['100%'];
-
-	$.get('/i/c/single.html', function(d){
-	    $('#main').html(d)
-	    iroPage.init({ heights: [ '100%' ]});
-	    iroPage.addPalette('#colors', colors);
-	    iro.init({
-		containers: iroPage.containers,
-		cameras: [
-		    { offset: offsets.side, zoom: 1.5 }
-		],
-		lights:  [
-		    { offset: { x: 0, y: 0, z: 70 },    shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x: -70, y:  0, z:  0 }, shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x:   0, y: 70, z:  0 }, shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x: -50, y: 40, z: 70 }, shadowDarkness: 0, color: 0x777777 }
-		]
-	    })
-	    iro.initEvents();
-	    iro.animate();
-	})
+	'adjust'     : 'viewAdjust',
+	'single'     : 'viewSingle',
+	'four'       : 'viewFour',
+	'three'      : 'viewThree'
     },
     viewThree : function(){
+	if (!obj.object) { location.hash = "#drop" }
 	$.get('/i/c/three.html', function(d){
 	    $('#main').html(d)
-	    iroPage.init({ heights: ['100%', '33%', '33%', '33%'] });
-	    iroPage.addPalette('#colors', colors);
-	    iro.init({
-		containers: iroPage.containers,
-		cameras: [
-		    { offset: offsets.side, zoom: 1.2 },
-		    { offset: offsets.toe,   zoom: 1.2 },
-		    { offset: offsets.top,    zoom: 1.2 },
-		    { offset: offsets.threeq, zoom: 1.2 }
-		],
-		lights:  [
-		    { offset: { x: 0, y: 0, z: 70 },    shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x: -70, y:  0, z:  0 }, shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x:   0, y: 70, z:  0 }, shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x: -50, y: 40, z: 70 }, shadowDarkness: 0, color: 0x777777 }
-		]
+	    var lights = [
+		{ offset: { x: 0, y: 0, z: 70 },    shadowDarkness: 0, color: 0x777777 },
+		{ offset: { x: -70, y:  0, z:  0 }, shadowDarkness: 0, color: 0x777777 },
+		{ offset: { x:   0, y: 70, z:  0 }, shadowDarkness: 0, color: 0x777777 },
+		{ offset: { x: -50, y: 40, z: 70 }, shadowDarkness: 0, color: 0x777777 }
+	    ];
+
+	    // page.clearScenes();
+	    var offsets = [ 'side', 'top', 'bottom', 'threeq' ]
+	    $('.renderer').each(function(i, e){
+		console.log('element');
+		console.log($(e).attr('id'));
+		
+		var renderer = new Iro.renderer(e)
+		var scene    = new Iro.scene(e, renderer);
+
+		scene.addObject(obj)
+		scene.addLights(lights)
+		scene.addCamera();
+		scene.showAxes();
+		scene.offsets = page.view(offsets[i]);
+		scene.render()
+
+		scene.initEvents();
+		page.addScene(scene);
 	    })
-	    iro.initEvents();
-	    iro.animate();
+	    page.initEvents()
+	    page.render();
 	})
     },
     viewFour : function(){
+	if (!obj.object) { location.hash = "#drop" }
 	$.get('/i/c/four.html', function(d){
 	    $('#main').html(d)
-	    iroPage.init({ heights: ['50%', '50%', '50%', '50%'] });
-	    iroPage.addPalette('#colors', colors);
-	    
-	    iro.init({
-		containers: iroPage.containers,
-		cameras: [
-		    { offset: { x: 0, y: 0, z: 70 },    zoom: 1.5 },
-		    { offset: { x: -70, y: 0, z: 0 },   zoom: 1.5 },
-		    { offset: { x: 0, y: 70, z: 0 },    zoom: 1.5 },
-		    { offset: { x: -50, y: 40, z: 70 }, zoom: 1.5 }
-		],
-		lights:  [
-		    { offset: { x: 0, y: 0, z: 70 },    shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x: -70, y:  0, z:  0 }, shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x:   0, y: 70, z:  0 }, shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x: -50, y: 40, z: 70 }, shadowDarkness: 0, color: 0x777777 }
-		]
+	    var lights = [
+		{ offset: { x: 0, y: 0, z: 70 },    shadowDarkness: 0, color: 0x777777 },
+		{ offset: { x: -70, y:  0, z:  0 }, shadowDarkness: 0, color: 0x777777 },
+		{ offset: { x:   0, y: 70, z:  0 }, shadowDarkness: 0, color: 0x777777 },
+		{ offset: { x: -50, y: 40, z: 70 }, shadowDarkness: 0, color: 0x777777 }
+	    ];
+
+	    // page.clearScenes();
+	    var offsets = [ 'side', 'top', 'bottom', 'threeq' ]
+	    $('.renderer').each(function(i, e){
+		console.log('element');
+		console.log($(e).attr('id'));
+		
+		var renderer = new Iro.renderer(e)
+		var scene    = new Iro.scene(e, renderer);
+
+		scene.addObject(obj)
+		scene.addLights(lights)
+		scene.addCamera();
+		scene.showAxes();
+		scene.offsets = page.view(offsets[i]);
+		scene.render()
+
+		// scene.animate()
+		scene.initEvents();
+		page.addScene(scene);
+		// scene.page = page;
 	    })
-	    iro.initEvents();
-	    iro.animate();
+	    page.initEvents()
+	    page.render();
+	})
+    },
+    viewSingle : function(){
+	var heights = ['100%'];
+	if (!obj.object) { location.hash = "#drop" }
+	$.get('/i/c/single.html', function(d){
+	    $('#main').html(d)
+	    var lights = [
+		{ offset: { x: 0, y: 0, z: 70 },    shadowDarkness: 0, color: 0x777777 },
+		{ offset: { x: -70, y:  0, z:  0 }, shadowDarkness: 0, color: 0x777777 },
+		{ offset: { x:   0, y: 70, z:  0 }, shadowDarkness: 0, color: 0x777777 },
+		{ offset: { x: -50, y: 40, z: 70 }, shadowDarkness: 0, color: 0x777777 }
+	    ];
+
+	    page.clearScenes();
+	    $('.renderer').each(function(i, e){
+		console.log('element');
+		console.log(e);
+
+		var renderer = new Iro.renderer(e)
+		var scene = new Iro.scene(e, renderer);
+
+		scene.offsets = { x: -70, y: 0, z: 0 };
+
+		scene.addObject(obj)
+		scene.addLights(lights)
+		scene.addCamera();
+		scene.showAxes();
+		scene.initEvents();
+		page.addScene(scene);
+	    })
+	    page.render();
+	    page.initEvents()
 	})
     },
     viewDrop : function(){
 	var heights = ['100%'];
 	$.get('/i/c/drop.html', function(d){
+	    console.log(app)
 	    $('#main').html(d)
 	})
     },
-    viewJSON : function(){
+    viewAdjust: function(){
 	var heights = ['100%'];
-	$.get('/i/c/json.html', function(d){
+	$.get('/i/c/adjust.html', function(d){
 	    $('#main').html(d)
-	})
-    },
-    viewSVG : function(){
-	$.get('/i/c/svg.html', function(d){
-	    $('#main').html(d)
-	    iroPage.init({ heights: [ '100%' ]});
-	    iro.init({
-		containers: iroPage.containers,
-		cameras: [
-		    { offset: offsets.side, zoom: 1.5 }
-		],
-		lights:  [
-		    { offset: { x: 0, y: 0, z: 70 },    shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x: -70, y:  0, z:  0 }, shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x:   0, y: 70, z:  0 }, shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x: -50, y: 40, z: 70 }, shadowDarkness: 0, color: 0x777777 }
-		]
+	    var lights = [
+		{ offset: { x: 0, y: 0, z: 70 },    shadowDarkness: 0, color: 0x777777 },
+		{ offset: { x: -70, y:  0, z:  0 }, shadowDarkness: 0, color: 0x777777 },
+		{ offset: { x:   0, y: 70, z:  0 }, shadowDarkness: 0, color: 0x777777 },
+		{ offset: { x: -50, y: 40, z: 70 }, shadowDarkness: 0, color: 0x777777 }
+	    ];
+
+	    page.clearScenes();
+	    $('.renderer').each(function(i, e){
+		console.log('element');
+		console.log(e);
+
+		var renderer = new Iro.renderer(e)
+		var scene = new Iro.scene(e, renderer);
+
+		scene.offsets = { x: -70, y: 0, z: 0 };
+
+		scene.addObject(obj)
+		scene.addLights(lights)
+		scene.addCamera();
+		scene.showAxes();
+		scene.initEvents();
+		page.addScene(scene);
 	    })
-	    iro.initEvents();
-	})
-    },
-    viewParts : function(){
-	$.get('/i/c/parts.html', function(d){
-	    $('#main').html(d)
-	    iroPage.init({ heights: [ '100%' ]});
-	    iro.init({
-		containers: iroPage.containers,
-		cameras: [
-		    { offset: offsets.side, zoom: 1.5 }
-		],
-		lights:  [
-		    { offset: { x: 0, y: 0, z: 70 },    shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x: -70, y:  0, z:  0 }, shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x:   0, y: 70, z:  0 }, shadowDarkness: 0, color: 0x777777 },
-		    { offset: { x: -50, y: 40, z: 70 }, shadowDarkness: 0, color: 0x777777 }
-		]
-	    })
-	    iro.initEvents();
-	})
-    },
-    viewTextures : function(){
-	$.get('/i/c/textures.html', function(d){
-	    $('#main').html(d)
+	    page.render();
+	    page.initEvents()
 	})
     }
 })
@@ -173,12 +174,3 @@ var appRouter = new IroRouter();
 Backbone.history.start();
 
 window.addEventListener( 'resize', iro.onWindowResize, false );
-
-iro.animate();
-
-// function animate() {
-//     setTimeout( function() {
-//         requestAnimationFrame( iro.animate() );
-//     }, 1000 * iro.interval );
-//     iro.render();
-// }

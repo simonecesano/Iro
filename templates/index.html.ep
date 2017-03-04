@@ -1,5 +1,13 @@
 % unless ($partial) { layout 'default' }
-<script src="/public/app/app.js"></script>
+
+<script src="/public/app/iro.js"></script>
+<script src="/public/app/iro.obj.js"></script>
+<script src="/public/app/iro.page.js"></script>
+<script src="/public/app/iro.renderer.js"></script>
+<script src="/public/app/iro.scene.js"></script>
+<script src="/public/app/iro.scene.image.js"></script>
+
+
 <script src="/public/app/router.js"></script>
 <script src="/public/app/events.js"></script>
 <div id="main">

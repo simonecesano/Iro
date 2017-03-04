@@ -1,10 +1,13 @@
-Iro.object = function(){
+Iro.object = function(objstr){
     this.object = undefined;
 
     this.materials = {};
     this.view = undefined;
     this.selection = {};
     this.groups = {};
+    this.scale = 1;
+
+    if (objstr) { this.setObject(objstr) }
     
     return this;
 }
@@ -13,31 +16,60 @@ Iro.object = function(){
 // the idea is that materials get assigned to the three.js object for visualization purposes
 // but the real material is stored in this.materials
 
-Iro.object.prototype.setObject = function(object_string) {
+Iro.object.prototype.setObject = function(objstr) {
     // assign object
 
     var iro = this
     var manager = new THREE.LoadingManager();
     var loader = new THREE.OBJLoader( manager );
-    var object = loader.parse(object_string);
+    var object = loader.parse(objstr);
     var count = 0;
 
     var material = new THREE.MeshLambertMaterial({ color: 0xCC0000 });
 
-    object.scale.x = 1;
-    object.scale.y = 1;
-    object.scale.z = 1;
+    var box    = new THREE.Box3().setFromObject( object )
+    var size   = box.getSize();
+    var center = box.getCenter();
 
+
+    // console.log('center before');
+    // console.log(center);
+
+    
+    var scale = 1 / _.min([size.x, size.y, size.z]);
+
+    // console.log('scale');
+    // console.log(scale);
+
+    
+    object.scale.x = scale;
+    object.scale.y = scale;
+    object.scale.z = scale;
+
+    this.scale = scale;
+
+    
+    // console.log('center after scale');
+    // console.log(new THREE.Box3().setFromObject( object ).getCenter());
+
+    var box    = new THREE.Box3().setFromObject( object )
+    var center = box.getCenter();
+
+    // object.translateZ(-center.z)
+    // object.translateY(-center.y)
+    // object.translateX(-center.x)
+    
+    // console.log('center after translate');
+    // console.log(new THREE.Box3().setFromObject( object ).getCenter());
+    
     object.traverse( function ( child ) {
 	if ( child instanceof THREE.Mesh ) {
 	    child.material = material.clone();
 	    var r = 0.7; var g = 0.7; var b = 0.7;
 	    child.material.color.setRGB (r, g, b);
 	    iro.materials[child.id] = child.material.clone();
-	    // console.log(child.id)
 	}
     } );
-    console.log(object);
     
     this.object = object;
     
@@ -81,3 +113,6 @@ Iro.object.prototype.idsInGroup = function(){
     // and so on recursively until no group is found
 }
 
+Iro.object.prototype.clone = function(){
+    return jQuery.extend(true, {}, this);
+}
