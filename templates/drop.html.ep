@@ -1,6 +1,17 @@
 % unless ($partial) { layout 'default' }
 <script>
-  console.log('foo')
+  var root;
+  window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
+  window.requestFileSystem(window.TEMPORARY, 16 * 60 * 1024 * 1024 ,
+			   function(fs){
+			       root = fs.root;
+			       console.log('Opened file system: ' + fs.name);
+			   },
+			   function(e){
+			       console.log(e);
+			   });
+
+
   var dropzone = document.getElementById('dropzone');
   
   dropzone.addEventListener('dragover', function(e) {
@@ -9,16 +20,104 @@
       e.dataTransfer.dropEffect = 'copy';
   });
       
-  dropzone.addEventListener('drop', function(e) {
+dropzone.addEventListener('drop', function(e) {
+      console.log('drop');
+      console.log(new Date())
       e.stopPropagation();
       e.preventDefault();
-      console.log('drop');
       file = e.dataTransfer.files[0]; // Array of all files
       var reader = new FileReader();
       reader.onload = function(e2) { 
           src = e2.target.result;
-	  console.log(obj);
+	  var hash = md5(src);
+	  var blob = new Blob([src], {type: 'text/plain'});
 	  obj.setObject(src);
+
+	  // cleanup
+	  root.createReader().readEntries(function(entries){
+	      var re = new RegExp('^' + hash, "i");
+	      entries.forEach(function(i){
+		  if (!(i.name.match(re))) { i.remove(function(){ console.log("removed " + i.name) }) }
+		  else { console.log(i.name) }
+	      });
+	  });
+	  // save file
+	  root.getFile(hash + '.obj',
+		       {create: true},
+		       function(file) {
+			   file.createWriter(function(w){
+			       w.onwriteend = function(e) { console.log('Write completed.') };
+			       w.write(blob);
+			   }, function(e){
+			       console.log('error on writing')
+			   })
+		       });
+
+	  // console.log(renderers);
+
+	  renderers = [1, 2, 3, 4, 5].map(function(i){
+	      return new Iro.renderer()
+	  })
+	  // console.log(renderers);
+	  var size;
+	  scenes = renderers.map(function(r, i){
+	      var scene    = new Iro.scene(r);
+	      var offset = offsets[i] || offsets[0];
+	      if (i == 4) {
+		  scene.init({ 'obj': obj.clone(), 'lights': lights, 'offsets': page.view(offset) })
+		  r.setDOMelement($('#renderer_5'));
+		  scene.render()
+		  size = scene.getSize();
+	      } else {
+		  scene.init({ 'obj': obj,  'lights': lights, 'offsets': page.view(offset) })
+	      }
+	      return scene;
+	  })
+
+
+	  var flatScene = scenes[4];
+	  // flatScene.render();
+	  
+	  console.log('start parts')
+	  console.log(new Date())
+
+	  flatScene.obj.traverse( function ( child ) {
+	      if ( child instanceof THREE.Mesh ) {
+		  var m = new THREE.MeshBasicMaterial();
+		  m.color.setScalar(1);
+		  child.material = m;
+	      }
+	  } );
+
+
+	  flatScene.obj.traverse( function ( child ) {
+	      if ( child instanceof THREE.Mesh ) {
+		  var m = new THREE.MeshBasicMaterial();
+		  m.color.setScalar(0);
+		  child.material = m;
+		  flatScene.render();
+
+		  var p = flatScene.readPixels();
+
+		  // console.log(size);
+		  var c = $('<canvas/>');
+		  c.prop(size);
+
+		  $('body').append(c)
+		  
+		  var i = new ImageData(p, size.width, size.height);
+
+		  var ctx = c.get(0).getContext('2d');
+		  ctx.putImageData(i, 0, 0);
+
+		  m.color.setScalar(1);
+		  child.material = m;
+	      }
+	  } );
+
+	  console.log('done')
+	  console.log(new Date())
+
 	  location.hash = "#single";
       }
       reader.readAsText(file);

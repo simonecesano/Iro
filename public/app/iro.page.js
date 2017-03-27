@@ -23,6 +23,7 @@ Iro.page = function(){
 }
 
 Iro.page.prototype.clearScenes = function(){ this.scenes = [] }
+
 Iro.page.prototype.addScene = function(scene){
     this.scenes.push(scene)
     scene.page = this;
@@ -56,20 +57,40 @@ Iro.page.prototype.initEvents = function(){
 	}
     });
 
+    $('#snapshot').off('click').on('click', function(e){
+	console.log('snapshot!')
+	console.log($('#c'))
+    });
+    
+
     $('#menu_rotate a').off('click').on('click', function(e){
 	e.preventDefault();
 	e.stopPropagation();
 
-	console.log('here');
+	// console.log('here');
 	var axis = $(this).data('rotation')
 	console.log(axis);
 	
 	var o = obj.object;
 	o.rotation[axis] = o.rotation[axis] + 90 * Math.PI / 180
 
+	_.each(page.scenes, function(e, i){
+	    console.log(e.camera.position);
+	    switch(axis) {
+	    case 'x':
+		console.log('x');
+	    case 'y':
+		console.log('y');
+	    case 'z':
+		console.log('z');
+	    }
+	})
 	page.render()
     });
-
+    $('.renderer').off('click').on('click', function(e){
+	console.log('selecting renderer')
+	console.log($(e.target).parent())
+    })
 }
 
 Iro.page.prototype.animate = function() {
@@ -111,4 +132,9 @@ Iro.page.prototype.view = function(type, distance) {
 	v.z = v.z * distance
     }
     return v;
+}
+
+Iro.page.prototype.render = function(){
+    // console.log(this.scenes.length);
+    _.each(this.scenes, function(e, i){ e.render() })
 }

@@ -1,4 +1,3 @@
-% unless ($partial) { layout 'default' }
 %= include 'layouts/palettes'
 %= include 'layouts/leftmenu'
 <div class="row renderers">
@@ -7,7 +6,4 @@
   <div id="renderer_3" class="renderer col-md-4 col-md-offset-1" style="height:40vh;"></div>
   <div id="renderer_4" class="renderer col-md-4 col-md-offset-0" style="height:40vh;"></div>
 </div>
-<script>
-  var heights = ['50%', '50%', '50%', '50%'];
-  var zooms   = [1.5, 1.5, 1.5, 1.5];
-</script>
+%= include 'layouts/footer'

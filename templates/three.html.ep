@@ -1,9 +1,9 @@
-% unless ($partial) { layout 'default' }
 %= include 'layouts/palettes'
 %= include 'layouts/leftmenu'
 <div class="row renderers">
   <div id="renderer_1" class="renderer col-md-6 col-md-offset-1" style="height:80vh;"></div>
-  <div id="renderer_2" class="renderer col-md-3 col-md-offset-0" style="height:26vh;"></div>
-  <div id="renderer_3" class="renderer col-md-3 col-md-offset-0" style="height:26vh;"></div>
+  <div id="renderer_2" class="renderer col-md-3 col-md-offset-0" style="height:27vh;"></div>
+  <div id="renderer_3" class="renderer col-md-3 col-md-offset-0" style="height:27vh;"></div>
   <div id="renderer_4" class="renderer col-md-3 col-md-offset-0" style="height:26vh;"></div>
 </div>
+%= include 'layouts/footer'

@@ -2,13 +2,14 @@ Iro.renderer = function(element, renderer){
     var e = $(element);
 
     if (renderer !== undefined) {
-	console.log('here');
+	// console.log('here');
 	this.renderer = renderer;
     } else {
 	this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });
 	this.renderer.setPixelRatio( window.devicePixelRatio );
     }
-
+    if (element === undefined) { element = $('<div></div>') }
+    
     this.renderer.setSize( $(e).width(), $(e).height() );
     
     $(e).empty();
@@ -21,34 +22,13 @@ Iro.renderer = function(element, renderer){
     return this;
 }
 
-
-
-// Iro.renderer.prototype.render = function() {
-//     var renderer = this.renderer;
-//     var scenes = this.scenes;
-
-//     if (!scenes.length) { return };
+Iro.renderer.prototype.setDOMelement = function(e){
+    this.renderer.setSize( $(e).width(), $(e).height() );
     
-//     renderer.setClearColor( 0xffffff );
-//     renderer.setScissorTest( false );
-//     renderer.clear();
-//     renderer.setClearColor( 0xe0e0e0 );
-//     renderer.setScissorTest( true );    
+    $(e).empty();
+    $(e).append( this.renderer.domElement );
 
-//     scenes.forEach( function( scene ) {
-// 	scene.render();
-//     });
-// }
+    this.domElement = this.renderer.domElement;
 
-// Iro.renderer.prototype.animate = function() {
-//     var iro = this;
-
-//     if (this.interval) {
-// 	setTimeout( function() {
-//             requestAnimationFrame( function(){ iro.animate() });
-// 	}, 1000 * iro.interval );
-// 	iro.render()
-//     } else {
-// 	iro.render()
-//     }
-// }
+    return this;
+}

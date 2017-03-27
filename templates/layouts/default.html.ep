@@ -30,20 +30,25 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://cdn.rawgit.com/riccardoscalco/textures/master/textures.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.7.0/js/md5.min.js"></script>
+    
     <style>
       td.x, td.y, td.z { text-align: right; width: 5em }
       body {
          min-height: 2000px;
 	 padding-top: 70px;
       }
-
+      .renderer {  border-radius: 6px; border: thin dashed grey } 
     </style>
   </head>
   <body>
+
+    %= include 'layouts/canvas'
     %= include 'layouts/menu'
+    %= include 'templates'
     <div class="container-fluid">
       <%= content %>
     </div>
+    <div id="renderer_5" class="renderer" style="width:100vw;height:100vh;top:0;left:0;border: thick solid red"></div>
   </body>
 </html>

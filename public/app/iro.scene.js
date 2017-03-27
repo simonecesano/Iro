@@ -1,6 +1,16 @@
 Iro.scene = function(element, renderer) {
-    this.element = $(element);
-    this.renderer = renderer.renderer; // this needs fixing
+    if (arguments.length > 1) {
+	element  = arguments[0];
+	renderer = arguments[1];
+	
+	this.element = $(element);
+	this.renderer = renderer.renderer; // this needs fixing
+    } else {
+	renderer = arguments[0];
+	this.element = $(renderer.domElement);
+	this.renderer = renderer.renderer; // this needs fixing
+    }
+
     this.frame = undefined;
     this.page = undefined;
     
@@ -33,12 +43,14 @@ Iro.scene.prototype.init = function(){
     
 Iro.scene.prototype.addObject = function(iro_object){
     this.scene.remove( this.obj );
+    
     this.obj = iro_object.object;
+    // console.log(this.obj.uuid);
     this.scene.add( this.obj );
 };
 
 Iro.scene.prototype.addCamera = function(camera){
-    var camera = new THREE.PerspectiveCamera( 45, this.element.width() / this.element.height(), 1, 200 );
+    var camera = camera ? camera : new THREE.PerspectiveCamera( 45, this.element.width() / this.element.height(), 1, 200 );
     
     camera.zoom = 20;
     camera.updateProjectionMatrix();
@@ -104,7 +116,6 @@ Iro.scene.prototype.render = function(){
     var box = new THREE.Box3().setFromObject( obj );
     var look_at = box.getCenter();
     var camera = this.camera;
-
     if (camera) {
 	_.chain(['x', 'y', 'z']).each(function(e, k){
 	    camera.position[e] = look_at[e] + offsets[e];
@@ -125,8 +136,9 @@ Iro.scene.prototype.render = function(){
     // console.log(this.obj);
     // console.log(this.obj.children.length);
     // console.log(this.camera);
-
+    // this.scene.remove(this.obj);
     this.scene.add(this.obj)
+    // console.log(this.obj.uuid);
     renderer.render( this.scene, this.camera );
 }
 
@@ -190,7 +202,9 @@ Iro.scene.prototype.initEvents = function(){
 	
 	var camera = scene.camera;
 	var obj = scene.obj
-
+	// console.log(scene.renderer.domElement)
+	// console.log(obj.uuid)
+	
         var vector = new THREE.Vector3(
               (event.layerX) / $(this).parent().width()  * 2 - 1,
             - (event.layerY) / $(this).parent().height() * 2 + 1,
@@ -212,7 +226,12 @@ Iro.scene.prototype.initEvents = function(){
             var c = chroma(r * 256, g * 256, b * 256);
             // iro.toggleSelection(intersects[0].object, event.shiftKey)
 	    var id = intersects[0].object.id;
-	    obj.getObjectById( id ).material.color.setRGB (r, g, b);
+	    var uuid = intersects[0].object.uuid;
+	    // obj.getObjectById( id ).material.color.setRGB (r, g, b);
+	    // console.log('Material ' + obj.getObjectByProperty('uuid', uuid ).material.uuid)
+	    // var m = obj.getObjectByProperty('uuid', uuid ).material.clone()
+	    // m.color.setRGB (r, g, b);
+	    obj.getObjectByProperty('uuid', uuid ).material.color.setRGB (r, g, b);
             // intersects[0].object.material.color.setRGB (r, g, b);
             // console.log(intersects[0].object.id)
 	    // console.log(intersects[0].object.material)
@@ -224,4 +243,17 @@ Iro.scene.prototype.initEvents = function(){
 	scene.page.render();
     }, false)
 
+}
+
+
+Iro.scene.prototype.init = function(opts){
+    var scene = this;
+    
+    scene.addObject(opts.obj);
+    scene.addLights(opts.lights);
+    scene.addCamera();
+    scene.offsets = opts.offsets;
+    scene.render()
+    scene.initEvents();
+    return scene;
 }

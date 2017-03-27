@@ -9,6 +9,5 @@
 
 
 <script src="/public/app/router.js"></script>
-<script src="/public/app/events.js"></script>
 <div id="main">
 </div>

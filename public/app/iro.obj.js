@@ -83,7 +83,7 @@ Iro.object.prototype.toggleSelection = function(id, addMode){
 	this.selection = {}
 	this.selection[id] = 1
     }
-    console.log(this.selection)
+    // console.log(this.selection)
     return this;
 }
 
@@ -114,5 +114,19 @@ Iro.object.prototype.idsInGroup = function(){
 }
 
 Iro.object.prototype.clone = function(){
-    return jQuery.extend(true, {}, this);
+    var o;
+    o = this.object.clone(true);
+    o.traverse( function ( child ) {
+	if ( child instanceof THREE.Mesh ) {
+	    child.material = child.material.clone();
+	}
+    } );
+    var t = jQuery.extend(true, {}, this);
+    t.object = undefined;
+    // console.log('cloning');
+    // console.log(this.object);
+    // console.log(t);
+    t.object = o;
+    // console.log(o);
+    return t;
 }
