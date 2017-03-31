@@ -89,7 +89,6 @@ dropzone.addEventListener('drop', function(e) {
 	      }
 	  } );
 
-
 	  flatScene.obj.traverse( function ( child ) {
 	      if ( child instanceof THREE.Mesh ) {
 		  var m = new THREE.MeshBasicMaterial();
@@ -97,23 +96,47 @@ dropzone.addEventListener('drop', function(e) {
 		  child.material = m;
 		  flatScene.render();
 
-		  var p = flatScene.readPixels();
+		  // var p = flatScene.readPixels();
 
-		  // console.log(size);
-		  var c = $('<canvas/>');
-		  c.prop(size);
+		  // console.log(p.length);
 
-		  $('body').append(c)
+		  var c = document.createElement('canvas');
+		  c.setAttribute('width', size.width);
+		  c.setAttribute('height', size.height);
+		  var ctx = c.getContext('2d');
+
+		  // ctx.setTransform(1, 0, 0, -1, 0, size.height);
+
+		  // ctx.scale(-1, 1);
+		  // ctx.translate(-size.width, 0);
 		  
-		  var i = new ImageData(p, size.width, size.height);
+		  ctx.drawImage(flatScene.renderer.domElement, 0, 0);
+		  
+		  $('#canvasses').append(c)
+		  
+		  // var i = new ImageData(p, size.width, size.height);
+		  // ctx.putImageData(i, 0, 0);
+		  
+		  
+		  // flipping the canvas
 
-		  var ctx = c.get(0).getContext('2d');
-		  ctx.putImageData(i, 0, 0);
+		  // var d = document.createElement('canvas');
+		  // d.width = c.width; d.height = c.height;
+		  // d.getContext('2d').drawImage(c, 0, 0);
+
+		  // ctx.clearRect(0, 0, c.width, c.height);
+		  // ctx.scale(-1, 1);
+		  // ctx.translate(c.width, 0);
+
+		  // ctx.drawImage(d, 0, 0);
+		  
 
 		  m.color.setScalar(1);
 		  child.material = m;
 	      }
 	  } );
+	  // $('#canvasses').hide()
+	  $('#renderer_5').hide()
 
 	  console.log('done')
 	  console.log(new Date())

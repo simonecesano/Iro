@@ -49,6 +49,9 @@
     <div class="container-fluid">
       <%= content %>
     </div>
-    <div id="renderer_5" class="renderer" style="width:100vw;height:100vh;top:0;left:0;border: thick solid red"></div>
+    <div id="renderer_5" class="renderer" style="width:100vw;height:100vh;top:0;left:0;border:none"></div>
+    <div class="container-fluid">
+      <div id="canvasses" class="col-md-9 col-md-offset-1"></div>
+    </div>
   </body>
 </html>
