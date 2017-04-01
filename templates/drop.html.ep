@@ -113,29 +113,37 @@ dropzone.addEventListener('drop', function(e) {
 		  ctx.drawImage(flatScene.renderer.domElement, 0, 0);
 		  
 		  $('#canvasses').append(c)
-		  
-		  // var i = new ImageData(p, size.width, size.height);
-		  // ctx.putImageData(i, 0, 0);
-		  
-		  
-		  // flipping the canvas
 
-		  // var d = document.createElement('canvas');
-		  // d.width = c.width; d.height = c.height;
-		  // d.getContext('2d').drawImage(c, 0, 0);
-
-		  // ctx.clearRect(0, 0, c.width, c.height);
-		  // ctx.scale(-1, 1);
-		  // ctx.translate(c.width, 0);
-
-		  // ctx.drawImage(d, 0, 0);
-		  
+		  var promise = new Promise(function(resolve, reject) {
+		      var canvas  = c;
+		      var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+		      var data = imageData.data;
+		      for (var i = 0; i < data.length; i += 4) {
+			  if (data[i] < 255) {
+			      data[i + 3] = 255 - data[i];
+			      data[i]     = 0;
+			      data[i + 1] = 0;
+			      data[i + 2] = 0;
+			  }
+		      }
+		      ctx.putImageData(imageData, 0, 0);
+		      if (1) {
+		  	  resolve(new Date());
+		      } else {
+		  	  reject(Error("It broke"));
+		      }
+		  });
+		  promise.then(function(result) {
+		      console.log(result); // "Stuff worked!"
+		  }, function(err) {
+		      console.log(err); // Error: "It broke"
+		  });
 
 		  m.color.setScalar(1);
 		  child.material = m;
 	      }
 	  } );
-	  // $('#canvasses').hide()
+	  $('#canvasses').hide()
 	  $('#renderer_5').hide()
 
 	  console.log('done')
