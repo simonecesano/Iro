@@ -96,20 +96,10 @@ dropzone.addEventListener('drop', function(e) {
 		  child.material = m;
 		  flatScene.render();
 
-		  // var p = flatScene.readPixels();
-
-		  // console.log(p.length);
-
 		  var c = document.createElement('canvas');
 		  c.setAttribute('width', size.width);
 		  c.setAttribute('height', size.height);
 		  var ctx = c.getContext('2d');
-
-		  // ctx.setTransform(1, 0, 0, -1, 0, size.height);
-
-		  // ctx.scale(-1, 1);
-		  // ctx.translate(-size.width, 0);
-		  
 		  ctx.drawImage(flatScene.renderer.domElement, 0, 0);
 		  
 		  $('#canvasses').append(c)
@@ -128,7 +118,7 @@ dropzone.addEventListener('drop', function(e) {
 		      }
 		      ctx.putImageData(imageData, 0, 0);
 		      if (1) {
-		  	  resolve(new Date());
+		  	  resolve('done part');
 		      } else {
 		  	  reject(Error("It broke"));
 		      }
@@ -143,13 +133,46 @@ dropzone.addEventListener('drop', function(e) {
 		  child.material = m;
 	      }
 	  } );
-	  $('#canvasses').hide()
-	  $('#renderer_5').hide()
+	  // $('#canvasses').hide()
+	  // $('#renderer_5').hide()
 
 	  console.log('done')
 	  console.log(new Date())
 
 	  location.hash = "#single";
+	  
+	  flatScene.obj.traverse( function ( child ) {
+	      if ( child instanceof THREE.Mesh ) {
+		  var m = new THREE.MeshBasicMaterial();
+		  var r = Math.random(); var g = Math.random(); var b = Math.random();
+		  m.color.setRGB (r, g, b);
+		  child.material = m;
+	      }
+	  } );
+
+
+	  // SVG renderer stuff here
+	  var SVGpromise = new Promise(function(resolve, reject) {
+	      SVGrenderer = new THREE.SVGRenderer();
+	      SVGrenderer.setClearColor( 0xf0f0f0 );
+	      SVGrenderer.setSize( $('#renderer_svg').width(), $('#renderer_svg').height() );
+	      SVGrenderer.setQuality( 'high' );
+	      $('#renderer_svg').append(SVGrenderer.domElement)
+	      SVGrenderer.render(flatScene.scene, flatScene.camera);
+	      if (1) {
+		  resolve(new Date());
+	      } else {
+		  reject(Error("It broke"));
+	      }
+	  });
+	  SVGpromise.then(function(result) {
+	      console.log('SVG done'); // "Stuff worked!"
+	      console.log(result); // "Stuff worked!"
+	  }, function(err) {
+	      console.log(err); // Error: "It broke"
+	  }); 
+
+
       }
       reader.readAsText(file);
   });
