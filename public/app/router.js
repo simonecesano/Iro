@@ -31,7 +31,8 @@ var IroRouter = Backbone.Router.extend({
 	'adjust'     : 'viewAdjust',
 	'single'     : 'viewSingle',
 	'four'       : 'viewFour',
-	'three'      : 'viewThree'
+	'three'      : 'viewThree',
+	'svg'        : 'saveSVG'
     },
     viewThree : function(){
 	if (!obj.object) { location.hash = "#drop" }
@@ -77,6 +78,13 @@ var IroRouter = Backbone.Router.extend({
 	$.get('/i/c/drop.html', function(d){
 	    $('#main').html(d)
 	})
+    },
+    saveSVG : function(){
+	console.log('saving SVG')
+	console.log($('#renderer_svg').html().substring(0, 200))
+	var blob = new Blob([$('#renderer_svg').html()], {type: "image/svg+xml"});
+	saveAs(blob, "shoe.svg");
+	window.history.back();
     }
 })
 
